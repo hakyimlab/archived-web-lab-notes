@@ -1,0 +1,44 @@
+---
+title: Unconstrained h2 is unreliable
+author: Haky Im
+date: '2020-10-29'
+slug: first-note-hki
+categories: []
+tags: []
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r, echo=FALSE}
+
+library(tidyverse)
+DATA="/Users/haekyungim/Box/LargeFiles/imlab-data/data-Github/test-blogdown/first-note-hki"
+
+
+```
+
+```{r}
+
+h2 = read_tsv(glue::glue("{DATA}/vgvp.txt"),col_names = FALSE)
+h2p1 = read_tsv(glue::glue("{DATA}/vgvp_perm.txt"),col_names = FALSE)
+h2p2 = read_tsv(glue::glue("{DATA}/vgvp_perm2.txt"),col_names = FALSE)
+
+dim(h2)
+dim(h2p1)
+dim(h2p2)
+
+summary(h2$X2)
+summary(h2p1$X2)
+summary(h2p2$X2)
+
+h2p1$X2t = pmax(pmin(h2p1$X2,2), -1)
+h2p2$X2t = pmax(pmin(h2p2$X2,2), -1)
+
+par(mfrow=c(3,1))
+hist(h2$X2,xlim=c(-1,2))
+hist(h2p1$X2t,xlim=c(-1,2))
+hist(h2p2$X2t,xlim=c(-1,2))
+par(mfrow=c(1,1))
+
+```
+

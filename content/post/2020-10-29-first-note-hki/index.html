@@ -1,0 +1,68 @@
+---
+title: Unconstrained h2 is unreliable
+author: Haky Im
+date: '2020-10-29'
+slug: first-note-hki
+categories: []
+tags: []
+editor_options: 
+  chunk_output_type: console
+---
+
+<link href="index_files/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<script src="index_files/anchor-sections/anchor-sections.js"></script>
+
+
+<pre><code>## ── Attaching packages ───────────────────────────────────── tidyverse 1.3.0 ──</code></pre>
+<pre><code>## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
+## ✓ tibble  3.0.3     ✓ dplyr   1.0.2
+## ✓ tidyr   1.1.1     ✓ stringr 1.4.0
+## ✓ readr   1.3.1     ✓ forcats 0.5.0</code></pre>
+<pre><code>## ── Conflicts ──────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>h2 = read_tsv(glue::glue(&quot;{DATA}/vgvp.txt&quot;),col_names = FALSE)</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   X1 = col_character(),
+##   X2 = col_double(),
+##   X3 = col_double()
+## )</code></pre>
+<pre class="r"><code>h2p1 = read_tsv(glue::glue(&quot;{DATA}/vgvp_perm.txt&quot;),col_names = FALSE)</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   X1 = col_character(),
+##   X2 = col_double(),
+##   X3 = col_double()
+## )</code></pre>
+<pre class="r"><code>h2p2 = read_tsv(glue::glue(&quot;{DATA}/vgvp_perm2.txt&quot;),col_names = FALSE)</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   X1 = col_character(),
+##   X2 = col_double(),
+##   X3 = col_double()
+## )</code></pre>
+<pre class="r"><code>dim(h2)</code></pre>
+<pre><code>## [1] 100   3</code></pre>
+<pre class="r"><code>dim(h2p1)</code></pre>
+<pre><code>## [1] 79  3</code></pre>
+<pre class="r"><code>dim(h2p2)</code></pre>
+<pre><code>## [1] 92  3</code></pre>
+<pre class="r"><code>summary(h2$X2)</code></pre>
+<pre><code>##      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+## -0.086611  0.005914  0.107115  0.225480  0.411777  1.066195</code></pre>
+<pre class="r"><code>summary(h2p1$X2)</code></pre>
+<pre><code>##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+## -0.07780 -0.02123  0.09334  0.43573  0.36534 12.64227</code></pre>
+<pre class="r"><code>summary(h2p2$X2)</code></pre>
+<pre><code>##      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+## -42.34265   0.00481   0.12064  -0.24615   0.36172   1.19819</code></pre>
+<pre class="r"><code>h2p1$X2t = pmax(pmin(h2p1$X2,2), -1)
+h2p2$X2t = pmax(pmin(h2p2$X2,2), -1)
+
+par(mfrow=c(3,1))
+hist(h2$X2,xlim=c(-1,2))
+hist(h2p1$X2t,xlim=c(-1,2))
+hist(h2p2$X2t,xlim=c(-1,2))</code></pre>
+<p><img src="index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<pre class="r"><code>par(mfrow=c(1,1))</code></pre>
