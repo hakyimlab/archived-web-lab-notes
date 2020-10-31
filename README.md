@@ -5,4 +5,4 @@ Lab notebooks in Rmarkdown
 - Save the Rmd
 - git add, commit and push
 
-Netlify is hosting the content in (imlab-notes.netlify.app)
+Netlify is hosting the content [here](imlab-notes.netlify.app)
