@@ -1,0 +1,32 @@
+---
+title: Test of something normal
+author: Haky Im
+date: '2004-10-30'
+slug: test-of-something-normal
+categories: []
+tags: []
+---
+
+This is a histogram of 1000 independent normal random variables.
+
+```{r}
+yy = rnorm(1000)
+hist(yy)
+
+```
+
+I prefer more bins for the histogram
+
+```{r}
+hist(yy, 50)
+```
+
+
+
+```{r}
+
+xx = rnorm(1000)
+plot(xx,yy)
+
+```
+
