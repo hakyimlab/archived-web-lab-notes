@@ -1,5 +1,5 @@
 ---
-title: Unconstrained h2 is unreliable
+title: Mean of unconstrained h2 is not a reliable measure of mean h2
 author: Haky Im
 date: '2020-10-29'
 slug: first-note-hki
@@ -9,7 +9,7 @@ editor_options:
   chunk_output_type: console
 ---
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, message=FALSE}
 
 library(tidyverse)
 DATA="/Users/haekyungim/Box/LargeFiles/imlab-data/data-Github/test-blogdown/first-note-hki"

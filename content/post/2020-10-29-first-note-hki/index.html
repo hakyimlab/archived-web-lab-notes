@@ -1,5 +1,5 @@
 ---
-title: Unconstrained h2 is unreliable
+title: Mean of unconstrained h2 is not a reliable measure of mean h2
 author: Haky Im
 date: '2020-10-29'
 slug: first-note-hki
@@ -13,14 +13,6 @@ editor_options:
 <script src="index_files/anchor-sections/anchor-sections.js"></script>
 
 
-<pre><code>## ── Attaching packages ───────────────────────────────────── tidyverse 1.3.0 ──</code></pre>
-<pre><code>## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
-## ✓ tibble  3.0.3     ✓ dplyr   1.0.2
-## ✓ tidyr   1.1.1     ✓ stringr 1.4.0
-## ✓ readr   1.3.1     ✓ forcats 0.5.0</code></pre>
-<pre><code>## ── Conflicts ──────────────────────────────────────── tidyverse_conflicts() ──
-## x dplyr::filter() masks stats::filter()
-## x dplyr::lag()    masks stats::lag()</code></pre>
 <pre class="r"><code>h2 = read_tsv(glue::glue(&quot;{DATA}/vgvp.txt&quot;),col_names = FALSE)</code></pre>
 <pre><code>## Parsed with column specification:
 ## cols(
