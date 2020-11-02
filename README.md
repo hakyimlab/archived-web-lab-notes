@@ -1,4 +1,4 @@
-Lab notebooks in Rmarkdown
+Lab notes in Rmarkdown
 
 For this setup to work, you need to have blogdown and hugo installed on your computer. 
 - `install.packages('blogdown') `
