@@ -12,4 +12,4 @@ For this setup to work, you need to have blogdown and hugo installed on your com
 - In format select `R Markdown (.Rmd)` option
 - git add, commit and push
 
-Netlify is hosting the content  [here](https://lab-notes.hakyimlab.org) and [here](https://web-lab-notes-hakyimlab.netlify.app)
+Netlify is hosting the content  [here](https://lab-notes.hakyimlab.org)
