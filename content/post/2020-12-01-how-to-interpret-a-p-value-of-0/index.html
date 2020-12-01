@@ -1,0 +1,27 @@
+---
+title: How to interpret a p-value of 0
+author: Haky Im
+date: '2020-12-01'
+slug: how-to-interpret-a-p-value-of-0
+categories: []
+tags:
+  - FAQ
+  - PrediXcan
+description: ''
+topics: []
+---
+
+<script src="{{< relref "post/2020-12-01-how-to-interpret-a-p-value-of-0/index.html" >}}index_files/header-attrs/header-attrs.js"></script>
+<link href="{{< relref "post/2020-12-01-how-to-interpret-a-p-value-of-0/index.html" >}}index_files/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<script src="{{< relref "post/2020-12-01-how-to-interpret-a-p-value-of-0/index.html" >}}index_files/anchor-sections/anchor-sections.js"></script>
+
+
+<p>A p-value of zero should be interpreted as an extremely small positive value.</p>
+<p>S-PrediXcan or PrediXcan will provide the zscore as well as the p-value. You can calculate the p-value corresponding to the Zscore using the formula below. For example a Zscore of 30 will give you a log10 p-value of -454.321244</p>
+<pre class="r"><code>Zscore = 30
+pnorm(-abs(Zscore) , log.p = TRUE)</code></pre>
+<pre><code>## [1] -454.3212</code></pre>
+<p>MultiXcan doesn’t output the test statistics used for the p-value calculation. But you can get a sense of how extreme the p-values can be by looking at the largest Z-scores in absolute value in the <code>z_min</code> and <code>z_max</code> columns. The log10 p-value corresponding to your results is shown below.</p>
+<pre class="r"><code>suppressMessages(library(tidyverse))
+tempo = read_tsv(&quot;~/Downloads/multixcan_output.txt&quot;)
+pnorm(- max(abs(c(tempo$z_max,tempo$z_min ) ), na.rm = TRUE), log.p = TRUE)</code></pre>
