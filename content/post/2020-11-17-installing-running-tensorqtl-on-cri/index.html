@@ -1,0 +1,63 @@
+---
+title: Installing/Running Tensorqtl on CRI
+author: Natasha
+date: '2020-11-17'
+slug: installing-running-tensorqtl-on-cri
+categories: []
+tags: []
+description: ''
+topics: []
+---
+
+<link href="index_files/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<script src="index_files/anchor-sections/anchor-sections.js"></script>
+
+
+<p>Note: You can download tensorqtl using pip install. However, there seems to be a bug that makes tensorqtl incompatible with pandas plink 2.2.2. If you want to download tensorqtl using pip, then you have to downgrade pandas plink to 2.1.x so that it matches the version of pandas 1.1.x</p>
+<p>I installed tensorqtl straight from the Github repo <a href="https://github.com/broadinstitute/tensorqtl" class="uri">https://github.com/broadinstitute/tensorqtl</a></p>
+<ol style="list-style-type: decimal">
+<li>Activate the environment</li>
+</ol>
+<pre class="sh"><code>conda activate /gpfs/data/im-lab/nas40t2/bin/envs/tensorqtl</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Clone the repo into your own directory in the labshare</li>
+</ol>
+<pre class="sh"><code>git clone git@github.com:broadinstitute/tensorqtl.git
+cd tensorqtl</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>Install tensorqtl and its requirements</li>
+</ol>
+<pre class="sh"><code>pip install -r install/requirements.txt</code></pre>
+<ol start="4" style="list-style-type: decimal">
+<li>Run Tensorqtl</li>
+</ol>
+<p>Requirements: Tensorqtl requires a genotype, phenotype and covariate file. The genotype files must be in plink format. The phenotype file must be in a .bed.gz format and follow the UCSC bed formate (<a href="http://fastqtl.sourceforge.net" class="uri">http://fastqtl.sourceforge.net</a>) Finally, the covariate file must be in a .txt format and is in the setup covariates x samples.</p>
+<p>Also make sure to set column names true for both the phenotype and covariate files. (Row names must also be present only for the covariate file)</p>
+<p>It’s also helpful to look at the example data provided by the repo.</p>
+<p>This is the command I used to run tensorqtl. I ran a trans-qtl so start and end positions on the genes were not significant.</p>
+<pre class="sh"><code>python3 -m tensorqtl /gpfs/data/im-lab/nas40t2/Data/GTEx/V8/genotype/plink_files/GTEX_tensorqtl /gpfs/data/im-lab/nas40t2/natasha/tensorqtl/pheno-tensorqtl.bed.gz /gpfs/data/im-lab/nas40t2/natasha/GTEX_tensorqtl \
+--covariates /gpfs/data/im-lab/nas40t2/natasha/tensorqtl/covariates.txt  \
+--mode trans </code></pre>
+<p>The command above will generate a parquet file in wherever you set the prefix to. The file can be read using pandas</p>
+<pre class="sh"><code>import pandas as pd
+df = pd.read_parquet(&quot;&lt;path_to_filename&gt;&quot;)</code></pre>
+
+<div id="disqus_thread"></div>
+<script>
+    /**
+    *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+    *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
+    /*
+    var disqus_config = function () {
+    this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    */
+    (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = 'https://https-internal-notes-hakyimlab-org.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
