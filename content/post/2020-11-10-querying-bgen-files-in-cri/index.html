@@ -1,0 +1,61 @@
+---
+title: Querying bgen files in CRI
+author: sabrina
+date: '2020-11-10'
+slug: querying-bgen-files-in-cri
+categories: []
+tags: [how to]
+description: ''
+topics: []
+---
+
+<link href="index_files/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<script src="index_files/anchor-sections/anchor-sections.js"></script>
+
+
+<div id="bgen-format" class="section level2">
+<h2>BGEN format</h2>
+<p>A bgen file has a header block with information about the file, including number of samples, the number of variant data blocks, and flags which describe how data is stores. A variant data block contains data for a single snp, including ID, position, and alleles. bgens from UKBiobank also have a sample identifier block with has an identifier for each sample.</p>
+</div>
+<div id="querying-a-subset-of-a-bgen-genotype" class="section level2">
+<h2>Querying a subset of a bgen genotype</h2>
+<p>Start an interactive job, <code>qsub -I</code>. We can query data for a region of a chromosome in a bgen file:</p>
+<pre class="bash"><code>module load gcc/6.2.0; module load bgen/1.1.3
+bgenix -g /gpfs/data/ukb-share/genotypes/v3/ukb_imp_chr17_v3.bgen -incl-range 17:46018872-46026674 &gt; pnpo_37.bgen
+</code></pre>
+<p>This outputs a bgen containing data only for snps on chromosome 17, between positions 46018872 46026674.</p>
+<p>Before querying it, we need to create an index file:</p>
+<pre class="bash"><code>bgenix -g pnpo_37.bgen -index
+</code></pre>
+<p>More documentation is <a href="https://enkre.net/cgi-bin/code/bgen/wiki/bgenix">here</a>.</p>
+</div>
+<div id="convert-to-vcf" class="section level2">
+<h2>Convert to VCF</h2>
+<p>For some reason, using the bgenix -vcf argument to convert the bgen output to a vcf is unreliable, so we use qctool to convert instead. qctool is installed in /gpfs/data/im-lab/nas40t2/bin. Note that qctool requires gcc, so this will need to be run in a job with the gcc module loaded.</p>
+<pre class="bash"><code>export PATH=$PATH:/gpfs/data/im-lab/nas40t2/bin/software
+
+<div id="disqus_thread"></div>
+<script>
+    /**
+    *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+    *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables    */
+    /*
+    var disqus_config = function () {
+    this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    */
+    (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+    s.src = 'https://https-internal-notes-hakyimlab-org.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+bgenix -g pnpo_37.bgen | qctool -g - -filetype bgen -s /gpfs/data/ukb-share/genotypes/ukb19526_imp_chr1_v3_s487395.sample -og ~/PNPO_37.vcf
+</code></pre>
+<p>Run <code>qctool -help</code> for a list of options, or for more documentation, <a href="https://www.well.ox.ac.uk/~gav/qctool_v2/index.html">https://www.well.ox.ac.uk/~gav/qctool_v2/index.html</a>.</p>
+</div>

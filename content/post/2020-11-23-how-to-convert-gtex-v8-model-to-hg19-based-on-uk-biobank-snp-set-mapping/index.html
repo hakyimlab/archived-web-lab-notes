@@ -1,26 +1,30 @@
 ---
-title: Test of something normal
-author: Haky Im
-date: '2004-10-30'
-slug: test-of-something-normal
+title: How to convert GTEx v8 model to hg19 based on UK Biobank SNP set mapping
+author: Sabrina Mi
+date: '2020-11-23'
+slug: how-to-convert-gtex-v8-model-to-hg19-based-on-uk-biobank-snp-set-mapping
 categories: []
-tags: []
+tags:
+  - how to
+  - prediction model
+description: ''
+topics: []
 ---
 
 <link href="index_files/anchor-sections/anchor-sections.css" rel="stylesheet" />
 <script src="index_files/anchor-sections/anchor-sections.js"></script>
 
 
-<p>This is a histogram of 1000 independent normal random variables.</p>
-<pre class="r"><code>yy = rnorm(1000)
-hist(yy)</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
-<p>I prefer more bins for the histogram</p>
-<pre class="r"><code>hist(yy, 50)</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
-<pre class="r"><code>xx = rnorm(1000)
-plot(xx,yy)</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p><code>/gpfs/data/im-lab/nas40t2/Data/References/mappings/UKB2GTEx_mapping.txt.gz</code> contains information for variants in UK Biobank genotypes. The columns are</p>
+<pre><code>variant chromosome  position    non_effect_allele   effect_allele   rsid    zscore  panel_variant_id
+1:15791:C:T chr1    15791   C   T   rs547522712 1   NA
+1:69487:G:A chr1    69487   G   A   rs568226429 1   NA
+1:69569:T:C chr1    69569   T   C   rs2531267   1   NA
+1:139853:C:T    chr1    139853  C   T   rs533633326 1   NA
+1:692794:CA:C   chr1    757414  CA  C   1:692794_CA_C   1   NA
+1:693731:A:G    chr1    758351  A   G   rs12238997  1   chr1_758351_A_G_b38
+1:707522:G:C    chr1    772142  G   C   rs371890604 1   chr1_772142_G_C_b38
+1:717587:G:A    chr1    782207  G   A   rs144155419 1   chr1_782207_G_A_b38</code></pre>
 
 <div id="disqus_thread"></div>
 <script>

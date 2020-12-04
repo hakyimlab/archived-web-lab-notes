@@ -1,26 +1,34 @@
 ---
-title: Test of something normal
-author: Haky Im
-date: '2004-10-30'
-slug: test-of-something-normal
+title: Creating Environments in CRI
+author: Natasha Santhanam
+date: '2020-11-13'
+slug: creating-environments-in-cri
 categories: []
 tags: []
+description: ''
+topics: []
 ---
 
 <link href="index_files/anchor-sections/anchor-sections.css" rel="stylesheet" />
 <script src="index_files/anchor-sections/anchor-sections.js"></script>
 
 
-<p>This is a histogram of 1000 independent normal random variables.</p>
-<pre class="r"><code>yy = rnorm(1000)
-hist(yy)</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
-<p>I prefer more bins for the histogram</p>
-<pre class="r"><code>hist(yy, 50)</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
-<pre class="r"><code>xx = rnorm(1000)
-plot(xx,yy)</code></pre>
-<p><img src="index_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<ol style="list-style-type: decimal">
+<li>Create the new environment using conda</li>
+</ol>
+<pre class="sh"><code>conda create -n env_name</code></pre>
+<p>Make sure this command is creating a new environment in the lab share and not your own personal directory since you will run out of disk space</p>
+<p>to specify where to install the environment use</p>
+<pre class="sh"><code>conda create --prefix /gpfs/data/im-lab/nas40t2/bin/envs/env_name </code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Activate the new environment</li>
+</ol>
+<pre class="sh"><code>conda activate env_name</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>Install whatever you want in your new environment. Also because the environment is in the labshare, anyone can use it just by calling</li>
+</ol>
+<pre class="sh"><code>conda install &lt;software&gt;
+conda activate /gpfs/data/im-lab/nas40t2/bin/envs/env_name</code></pre>
 
 <div id="disqus_thread"></div>
 <script>
