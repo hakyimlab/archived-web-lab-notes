@@ -1,0 +1,152 @@
+---
+title: fn_compare_expression_matrices
+author: Haky Im
+date: '2020-12-03'
+slug: im-compare-expression-matrices
+categories: []
+tags: []
+description: ''
+topics: []
+editor_options: 
+  chunk_output_type: console
+---
+
+<script src="{{< relref "post/2020-12-03-im-compare-expression-matrices/index.html" >}}index_files/header-attrs/header-attrs.js"></script>
+<link href="{{< relref "post/2020-12-03-im-compare-expression-matrices/index.html" >}}index_files/anchor-sections/anchor-sections.css" rel="stylesheet" />
+<script src="{{< relref "post/2020-12-03-im-compare-expression-matrices/index.html" >}}index_files/anchor-sections/anchor-sections.js"></script>
+
+
+<p>Want to write a function that takes in two data frames with expression data and returns</p>
+<ul>
+<li><p>vector of correlations of matched genes</p></li>
+<li><p>summary of the correlation vect (min,1Q,median,3Q,max)</p></li>
+<li><p>returns a list of aligned data frames</p></li>
+<li><p>plots correlation for a sample of matched genes</p></li>
+<li><p>print number of individuals in df1 and df2</p></li>
+<li><p>print number of individuals in common between df1 and df2</p></li>
+<li><p>print number of genes in common between df1 and df2</p></li>
+<li><p>print number of genes in df1 not in df2</p></li>
+<li><p>print number of genes in df2 not in df1</p></li>
+</ul>
+<pre><code>## Rows: 838
+## Columns: 14,262
+## Delimiter: &quot;\t&quot;
+## chr [    2]: FID, IID
+## dbl [14260]: ENSG00000187608, ENSG00000188290, ENSG00000160072, ENSG00000162576, ENSG00000187642...
+## 
+## Use `spec()` to retrieve the guessed column specification
+## Pass a specification to the `col_types` argument to quiet this message</code></pre>
+<pre><code>## Rows: 838
+## Columns: 12,816
+## Delimiter: &quot;\t&quot;
+## chr [    2]: FID, IID
+## dbl [12814]: ENSG00000237491.8, ENSG00000177757.2, ENSG00000225880.5, ENSG00000272438.1, ENSG000...
+## 
+## Use `spec()` to retrieve the guessed column specification
+## Pass a specification to the `col_types` argument to quiet this message</code></pre>
+<p>Comparison function</p>
+<pre class="r"><code>fn_remove_ver_from_names = function(df)
+{
+  ind = substr(names(df),1,4) == &quot;ENSG&quot;
+  names(df)[ind] = substr(names(df)[ind],1,15)
+  df
+}
+
+
+fn_compare_expression_matrices = function(df1, df2, nplots = 4, common_genes=TRUE,plot_dir=NULL)
+  {
+  ## this function assumes that df1 and df2 have the first two columns named FID and IID&quot;
+  ## usage: 
+  ## tempo_list = fn_compare_expression_matrices(df1, df2, plot_dir=&quot;working_dir/plots&quot;)
+  ## to see plots on screen use the default value plot_dir=NULL by not specifying anything
+  ## tempo_list = fn_compare_expression_matrices(df1, df2)
+  print(dim(df1)) 
+  print(dim(df2))
+  if(!identical(df1$FID, df2$FID) |  !identical(df1$IID, df2$IID) )
+  {
+    id_tibble &lt;- full_join(hg19[,1:2], amygdala[,1:2])
+    print(paste(&quot;in total there are &quot;,nrow(id_tibble) , &quot;rows&quot;) )
+    df1 = left_join(id_tibble, df1, by=c(&quot;FID&quot;,&quot;IID&quot;))  
+    df2 = left_join(id_tibble, df1, by=c(&quot;FID&quot;,&quot;IID&quot;))  
+    print(identical(df1$FID, df2$FID))
+    print(identical(df1$IID, df2$IID)) 
+    print(&quot;the two lines above should say TRUE&quot;)
+  } 
+  ## remove version number from ensid
+  df1 = fn_remove_ver_from_names(df1)
+  df2 = fn_remove_ver_from_names(df2)
+  if(common_genes)
+  { 
+    gene_list = intersect(names(df1),names(df2))
+    gene_list = gene_list[!(gene_list %in% c(&quot;FID&quot;,&quot;IID&quot;))] ## remove FID, IID
+    print(glue::glue(&quot;There are {length(gene_list)} genes in common&quot;))
+    cor_vec = rep(NA, length(gene_list)); names(cor_vec) = gene_list
+    for(gg in gene_list)
+    {
+      cor_vec[gg] = cor(df1[[gg]],df2[[gg]])
+    }
+    print(summary(cor_vec))
+    for(pp in 1:nplots) {
+      gg = sample(gene_list,1)
+      if(!is.null(plot_dir)) png(glue::glue(&quot;{plot_dir}/{gg}_df1_vs_df2.png&quot;))
+      plot(df1[[gg]],df2[[gg]],main=paste(gg,&quot; - cor = &quot;,round(cor_vec[gg]),2))
+      if(!is.null(plot_dir)) dev.off()
+    }
+    if(!is.null(plot_dir)) png(glue::glue(&quot;{plot_dir}/hist_cor_df1_vs_df2.png&quot;))
+    hist(cor_vec,main=&quot;correlation between df1 and df2&quot;)
+    if(!is.null(plot_dir)) dev.off()
+  } else ## below is just testing, 10K by 10K is too large
+  if(ncol(df1)*ncol(df2)&lt;2e6){
+    mat1 = scale( as.matrix(df1 %&gt;% select(-c(&quot;FID&quot;,&quot;IID&quot;)) ) )
+    mat2 = scale(as.matrix(df2 %&gt;% select(-c(&quot;FID&quot;,&quot;IID&quot;)) ) )
+    cor_mat = t(mat1) %*% mat2 / nrow(mat1)
+  }
+  list(df1,df2,cor_vec)
+}
+
+tempo_list = suppressWarnings(fn_compare_expression_matrices(df1, df2) )</code></pre>
+<pre><code>## [1]   838 14262
+## [1]   838 12816
+## There are 8557 genes in common
+##     Min.  1st Qu.   Median     Mean  3rd Qu.     Max.     NA&#39;s 
+## -0.98801  0.05389  0.36561  0.37017  0.74258  1.00000       11</code></pre>
+<p><img src="{{< relref "post/2020-12-03-im-compare-expression-matrices/index.html" >}}index_files/figure-html/unnamed-chunk-2-1.png" width="672" /><img src="{{< relref "post/2020-12-03-im-compare-expression-matrices/index.html" >}}index_files/figure-html/unnamed-chunk-2-2.png" width="672" /><img src="{{< relref "post/2020-12-03-im-compare-expression-matrices/index.html" >}}index_files/figure-html/unnamed-chunk-2-3.png" width="672" /><img src="{{< relref "post/2020-12-03-im-compare-expression-matrices/index.html" >}}index_files/figure-html/unnamed-chunk-2-4.png" width="672" /><img src="{{< relref "post/2020-12-03-im-compare-expression-matrices/index.html" >}}index_files/figure-html/unnamed-chunk-2-5.png" width="672" /></p>
+<p>Calculated correlation all genes agains all genes. Thsi cannot be done for all the genes, so I’m using a subset of 100 or so.</p>
+<pre class="r"><code>suppressMessages(library(wesanderson))
+
+
+
+tileplot &lt;- function(mat,no_label=FALSE)
+{
+  mat = data.frame(mat)
+  mat$Var1 = factor(rownames(mat), levels=rownames(mat)) ## preserve rowname order
+  melted_mat &lt;- gather(mat,key=Var2,value=value,-Var1)
+  melted_mat$Var2 = factor(melted_mat$Var2, levels=colnames(mat)) ## preserve colname order
+  rango = range(melted_mat$value)
+  melted_mat$val2 = cut(melted_mat$value,breaks=c(-1,-0.3,0.3,1))
+  pp &lt;- ggplot(melted_mat,aes(x=Var1,y=Var2,fill=val2)) + geom_tile() ##+scale_fill_gradientn(colours = c(&quot;#C00000&quot;, &quot;#FF0000&quot;, &quot;#FF8080&quot;, &quot;#FFC0C0&quot;, &quot;#FFFFFF&quot;, &quot;#C0C0FF&quot;, &quot;#8080FF&quot;, &quot;#0000FF&quot;, &quot;#0000C0&quot;), limit = c(-1,1)) 
+  if(no_label)  
+    pp &lt;- pp + 
+    theme(axis.title.x=element_blank(),
+          axis.text.x=element_blank(),
+          axis.ticks.x=element_blank(),
+          axis.title.y=element_blank(),
+          axis.text.y=element_blank(),
+          axis.ticks.y=element_blank()) +
+    scale_fill_manual(values = wes_palette(&quot;GrandBudapest1&quot;, n = 3))
+          #scale_fill_brewer(palette = &quot;Dark2&quot;)
+          # scale_fill_gradientn( colours=rainbow(5),limit=c(-1,1) )
+##    scale_fill_gradient( limits = c(-.5,.5),low =  &quot;blue&quot;, high = &quot;red&quot;, na.value=&quot;black&quot;) 
+  print(pp)
+}
+
+
+  df1 = fn_remove_ver_from_names(df1)
+  df2 = fn_remove_ver_from_names(df2)
+
+t_genelist = sample(intersect(colnames(df1[,-c(1:2)]),colnames(df2[,-c(1:2)])),100)
+    mat1 = scale( as.matrix(df1[,t_genelist]  ) )
+    mat2 = scale(as.matrix(df2[,t_genelist]  ) )
+cor_mat = t(mat1) %*% mat2 / nrow(mat1)
+tileplot(cor_mat,no_label=TRUE)</code></pre>
+<p><img src="{{< relref "post/2020-12-03-im-compare-expression-matrices/index.html" >}}index_files/figure-html/testing%20all%20vs%20all%20correlation-1.png" width="672" /></p>
