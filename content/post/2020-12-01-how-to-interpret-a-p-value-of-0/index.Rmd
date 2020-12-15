@@ -19,7 +19,7 @@ S-PrediXcan or PrediXcan will provide the zscore as well as the p-value. You can
 ```{r}
 
 Zscore = 30
-pnorm(-abs(Zscore) , log.p = TRUE) + log(2)
+pnorm(-abs(Zscore) , log.p = TRUE) + log(2)  
 
 ```
 
@@ -30,6 +30,6 @@ MultiXcan doesn't output the test statistics used for the p-value calculation. B
 ```{r, eval=FALSE}
 suppressMessages(library(tidyverse))
 tempo = read_tsv("~/Downloads/multixcan_output.txt")
-pnorm(- max(abs(c(tempo$z_max,tempo$z_min ) ), na.rm = TRUE), log.p = TRUE) + log(2)
+pnorm(- max(abs(c(tempo$z_max,tempo$z_min ) ), na.rm = TRUE), log.p = TRUE) + log(2) 
 
 ```  
