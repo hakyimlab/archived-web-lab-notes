@@ -24,4 +24,4 @@ pnorm(-abs(Zscore) , log.p = TRUE) + log(2)</code></pre>
 <p>MultiXcan doesn’t output the test statistics used for the p-value calculation. But you can get a sense of how extreme the p-values can be by looking at the largest Z-scores in absolute value in the <code>z_min</code> and <code>z_max</code> columns. The (natural) log of the p-value corresponding to your results is shown below.</p>
 <pre class="r"><code>suppressMessages(library(tidyverse))
 tempo = read_tsv(&quot;~/Downloads/multixcan_output.txt&quot;)
-pnorm(- max(abs(c(tempo$z_max,tempo$z_min ) ), na.rm = TRUE), log.p = TRUE)</code></pre>
+pnorm(- max(abs(c(tempo$z_max,tempo$z_min ) ), na.rm = TRUE), log.p = TRUE) + log(2)</code></pre>

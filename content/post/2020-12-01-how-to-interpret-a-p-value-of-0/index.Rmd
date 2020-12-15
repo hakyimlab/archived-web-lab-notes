@@ -30,6 +30,6 @@ MultiXcan doesn't output the test statistics used for the p-value calculation. B
 ```{r, eval=FALSE}
 suppressMessages(library(tidyverse))
 tempo = read_tsv("~/Downloads/multixcan_output.txt")
-pnorm(- max(abs(c(tempo$z_max,tempo$z_min ) ), na.rm = TRUE), log.p = TRUE)
+pnorm(- max(abs(c(tempo$z_max,tempo$z_min ) ), na.rm = TRUE), log.p = TRUE) + log(2)
 
 ```  
