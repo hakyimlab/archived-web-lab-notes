@@ -20,6 +20,6 @@ Next, we compared PsychENCODE S-PrediXcan association results with GTEx v7 Brain
 The results can be found [here](test_scz_clozuk_pgc.html).
 
 The original PsychENCODE model was defined in hg19, but we also lifted it over to hg38. We validated it by comparing S-PrediXcan associations results from the original hg19, lifted over hg38, and GTEx v8 mashr Brain Cortex models on the Schizophrenia GWAS.
-The steps to lift over the model and the validation results are [here](test_alcdep.html).
+The steps to lift over the model and the validation results are [here](psychencode_hg38_validation.html).
 
 
