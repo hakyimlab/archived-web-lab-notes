@@ -10,7 +10,7 @@ tags:
 
 Gandal et al generated transcriptome prediction models that are available on [PsychENCODE](http://resource.psychencode.org/Datasets/Derived/PEC_TWAS_weights.tar.gz).
 
-We used the weights they generated from the elastic net method and reformated it into a model compatible with PrediXcan software ([code](https://hakyimlab.github.io/psychencode/generate_weights.html)). We also calculated covariances between variants ([code](https://hakyimlab.github.io/psychencode/calculate_covariances.html). 
+We used the weights they generated from the elastic net method and reformated it into a model compatible with PrediXcan software ([code](https://hakyimlab.github.io/psychencode/generate_weights.html)). We also calculated covariances between variants ([code](https://hakyimlab.github.io/psychencode/calculate_covariances.html)). 
 The models can be downloaded [here](https://uchicago.app.box.com/s/du6f4z1zcgtn2v5gqms8kjajt1lsaprh).
 
 We validated the model by running PrediXcan on 1000G genotypes PsychENCODE, GTEx v7 Brain Cortex, and GTEx v7 Whole Blood tissue models, and then comparing the correlation between predicted gene expression and observed expression from GEUVADIS.
