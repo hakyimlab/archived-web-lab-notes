@@ -1,5 +1,5 @@
 ---
-title: Psychencode Models
+title: PsychENCODE Models
 author: Sabrina Mi
 date: '2020-12-21'
 slug: psychencode-models
