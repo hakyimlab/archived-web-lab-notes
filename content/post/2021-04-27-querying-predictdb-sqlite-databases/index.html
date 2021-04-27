@@ -1,0 +1,78 @@
+---
+title: Querying PredictDB sqlite databases
+author: Haky Im
+date: '2021-04-27'
+slug: querying-predictdb-sqlite-databases
+categories:
+  - how_to
+tags: []
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>PredictDB databases are stored in simple sqlite files. You can programmatically query them via python, R, perl, etc (using appropriate libraries). Below is an example on how to query the database in R.</p>
+<p>Each has two tables the extra and the weights tables.
+- extra table contains the list of available genes and some prediction performance information (for elastic net, not for the mashr models),
+- weights table contains the weights for predicting the gene expression levels (or other mediating/molecular traits)</p>
+<pre class="r"><code>## install.packages(&quot;RSQLite&quot;)
+library(&quot;RSQLite&quot;)
+sqlite &lt;- dbDriver(&quot;SQLite&quot;)
+dbname &lt;- &quot;assets/en_Adipose_Subcutaneous.db&quot; ## add full path if db file not in current directory
+## connect to db
+db = dbConnect(sqlite,dbname)
+## list tables
+dbListTables(db)</code></pre>
+<pre><code>## [1] &quot;extra&quot;   &quot;weights&quot;</code></pre>
+<pre class="r"><code>dbListFields(db, &quot;weights&quot;)</code></pre>
+<pre><code>## [1] &quot;gene&quot;       &quot;rsid&quot;       &quot;varID&quot;      &quot;ref_allele&quot; &quot;eff_allele&quot;
+## [6] &quot;weight&quot;</code></pre>
+<pre class="r"><code>dbListFields(db, &quot;extra&quot;)</code></pre>
+<pre><code>##  [1] &quot;gene&quot;                  &quot;genename&quot;              &quot;gene_type&quot;            
+##  [4] &quot;alpha&quot;                 &quot;n_snps_in_window&quot;      &quot;n.snps.in.model&quot;      
+##  [7] &quot;test_R2_avg&quot;           &quot;test_R2_sd&quot;            &quot;cv_R2_avg&quot;            
+## [10] &quot;cv_R2_sd&quot;              &quot;in_sample_R2&quot;          &quot;nested_cv_fisher_pval&quot;
+## [13] &quot;nested_cv_converged&quot;   &quot;rho_avg&quot;               &quot;rho_se&quot;               
+## [16] &quot;rho_zscore&quot;            &quot;pred.perf.R2&quot;          &quot;pred.perf.pval&quot;       
+## [19] &quot;pred.perf.qval&quot;</code></pre>
+<pre class="r"><code>## convenience query function
+query &lt;- function(...) dbGetQuery(db, ...)
+## example queries
+query(&#39;select count(*) from weights&#39;)</code></pre>
+<pre><code>##   count(*)
+## 1   249965</code></pre>
+<pre class="r"><code>query(&#39;select * from weights where gene = &quot;GATA6&quot; &#39;)</code></pre>
+<pre><code>## [1] gene       rsid       varID      ref_allele eff_allele weight    
+## &lt;0 rows&gt; (or 0-length row.names)</code></pre>
+<pre class="r"><code>query(&#39;select * from weights limit 10&#39;)</code></pre>
+<pre><code>##                 gene       rsid                varID ref_allele eff_allele
+## 1  ENSG00000261456.5 rs11252127  chr10_52147_C_T_b38          C          T
+## 2  ENSG00000261456.5 rs11252546  chr10_58487_T_C_b38          T          C
+## 3  ENSG00000261456.5 rs11591988  chr10_80130_C_T_b38          C          T
+## 4  ENSG00000261456.5  rs4495823  chr10_97603_G_A_b38          G          A
+## 5  ENSG00000261456.5 rs11253478  chr10_98907_C_T_b38          C          T
+## 6  ENSG00000261456.5  rs7901397 chr10_102757_T_C_b38          T          C
+## 7  ENSG00000261456.5  rs7476951 chr10_137211_T_C_b38          T          C
+## 8  ENSG00000261456.5  rs3123247 chr10_264285_C_T_b38          C          T
+## 9  ENSG00000261456.5  rs4880567 chr10_267364_T_C_b38          T          C
+## 10 ENSG00000261456.5  rs4881392 chr10_519179_A_G_b38          A          G
+##          weight
+## 1   0.052252706
+## 2  -0.033544959
+## 3   0.014296499
+## 4  -0.030826218
+## 5   0.013036311
+## 6  -0.118567569
+## 7   0.007865262
+## 8   0.004556608
+## 9   0.030123310
+## 10  0.057842737</code></pre>
+<pre class="r"><code>## how many genes are available for given tissue?
+## dbname should be the name of the sqlite database for the tissue
+query(&#39;select count(*) from extra&#39;)</code></pre>
+<pre><code>##   count(*)
+## 1     8650</code></pre>
+<pre class="r"><code>## select genes with R2&gt;0.01 (this is cor&gt;0.1)
+## ths won&#39;t work for the latest MASHR-based GTEx V8 models
+## this only works for models where R2 is included. 
+#high.h2.genes &lt;- query(&#39;select * from extra where R2 &gt; 0.01&#39;)</code></pre>
