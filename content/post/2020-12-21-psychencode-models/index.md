@@ -14,7 +14,7 @@ Gandal et al analyzed autism spectrum disorder, schizophrenia, and bipolar disor
 
 ## Gene expression level prediction models
 
-We extracted the elastic-net weights released provided Gandal et al. who chose (as prescribed by FUSION) the model that maximized the prediction performance among elastic net, BSLMM, lasso, top eQTL, and polygenic risk score approaches. Our extensive analysis had shown that this was not necessary since the very sparse architecture of gene expression traits were optimally predicted using elastic net [in this paper](https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1006423). We further confirmed our assersion by comparing the different prediction model performance as provided by Gandal et al as shown in the figure below. 
+We extracted the elastic-net weights released provided Gandal et al. who chose (as prescribed by FUSION) the model that maximized the prediction performance among elastic net, BSLMM, lasso, top eQTL, and BLUP (best linear unbiased prediction, similar to ridge regression). Our extensive analysis had shown that this was not necessary since the very sparse architecture of gene expression traits were optimally predicted using elastic net [in this paper](https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1006423). We further confirmed our assersion by comparing the different prediction model performance as provided by Gandal et al as shown in the figure below. 
 
 ![](https://hakyimlab.github.io/psychencode/figure/get_r2_LV.Rmd/Comparison%20of%20Models-5.png)
 
