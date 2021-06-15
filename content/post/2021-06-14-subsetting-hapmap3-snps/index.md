@@ -64,3 +64,11 @@ The resulting files of the test run are here:
 * [maf = 0.01, build = b37](https://uchicago.box.com/s/junrcgxwpuyck03r6gq88j9b18g18vf5)
 * [maf = 0.05, build = b37](https://uchicago.box.com/s/sj0xsd0wbvty9dgxx0jewjw0tnd8aoch) 
 
+# how to download the hapmap files
+
+wget https://ftp.ncbi.nlm.nih.gov/hapmap/genotypes/hapmap3_r3/plink_format/00README.txt
+wget https://ftp.ncbi.nlm.nih.gov/hapmap/genotypes/hapmap3_r3/plink_format/hapmap3_r3_b36_fwd.consensus.qc.poly.map.gz
+wget https://ftp.ncbi.nlm.nih.gov/hapmap/genotypes/hapmap3_r3/plink_format/hapmap3_r3_b36_fwd.consensus.qc.poly.ped.gz
+wget https://ftp.ncbi.nlm.nih.gov/hapmap/genotypes/hapmap3_r3/plink_format/hapmap3_r3_b36_fwd.qc.poly.tar.gz
+
+** see copy of the files in https://uchicago.box.com/s/tccjhavco9cifwddyy2bmd0qtiwk0mp2
