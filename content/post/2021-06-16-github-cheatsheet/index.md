@@ -1,10 +1,12 @@
 ---
-title: 'Github Cheatsheet'
-date: '2020-12-18'
-author: 'Haky Im'
-tags:
- - Cheatsheet
+title: Github Cheatsheet
+author: Haky Im
+date: '2021-06-16'
+slug: github-cheatsheet
+categories: []
+tags: []
 ---
+
 
 ## clean github repository history
 
