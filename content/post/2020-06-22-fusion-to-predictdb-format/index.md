@@ -1,5 +1,5 @@
 ---
-title: Fusion to PredictDB format
+title: Converting Fusion weight to PredictDB format
 author: Sabrina Mi
 date: '2020-06-22'
 slug: fusion-to-predictdb-format
