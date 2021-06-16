@@ -1,5 +1,5 @@
 ---
-title: Windows_WSL
+title: Configuring Windows Subsystem for Linux
 author: Ian Waters
 date: '2020-08-10'
 slug: windows-wsl
