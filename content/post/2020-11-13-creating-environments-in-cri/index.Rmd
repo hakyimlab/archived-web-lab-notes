@@ -9,14 +9,7 @@ description: ''
 topics: []
 ---
 
-1) Create the new environment using conda
-```{sh, eval=FALSE}
-conda create -n env_name
-```
-
-Make sure this command is creating a new environment in the lab share and not your own personal directory since you will run out of disk space
-
-to specify where to install the environment use
+1) Create the new environment in the lab share 
 
 ```{sh, eval=FALSE}
 conda create --prefix /gpfs/data/im-lab/nas40t2/bin/envs/env_name 
