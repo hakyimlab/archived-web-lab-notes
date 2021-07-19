@@ -38,13 +38,14 @@ for(dbname in dbnamelist)
   db = dbConnect(sqlite,glue::glue("{model_dir}/{dbname}"))
   ## list tables
   tempo <- dbGetQuery(db,"select * from weights where gene like 'ENSG00000167914%'") ## % is wildcard, to avoid dealing with ENSG version number
-  if(nrow(tempo)>1) 
+  if(nrow(tempo)>0) 
   {
     tempo$tissue <- gsub("mashr_","",gsub(".db","",dbname))
     df = rbind(df,tempo)
   }
 }
 df %>% count(rsid,varID) %>% arrange(desc( n))
+write_csv(df,"~/Downloads/GSDMA-weights.csv")
 
 ```
 
