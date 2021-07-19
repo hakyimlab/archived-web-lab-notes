@@ -1,0 +1,36 @@
+---
+title: Get list of predictor SNPs and weights in predictdb
+author: Haky Im
+date: '2021-07-19'
+slug: get-list-of-predictor-snps-and-weights-in-predictdb
+categories:
+  - how_to
+tags: []
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>To get a list of SNPs and the corresponding weights to predict expression levels (or splicing) of a given gene, you will first need to download the databases where the prediction models are stored. For example, you can download them from <a href="https://zenodo.org/record/3518299#.YPXA4G5Olqs">here</a> more specifically <a href="https://zenodo.org/record/3518299/files/mashr_eqtl.tar?download=1">from this tar file</a></p>
+<p>On CRI they are located in <code>/gpfs/data/im-lab/nas40t2/Data/PredictDB/GTEx_v8/models_v1/eqtl/mashr/</code></p>
+<p>Here I will mount the drive to my local machine following <a href="https://lab-notes.hakyimlab.org/post/2021/07/12/map-cri-storage-to-your-computer/">these instructions</a></p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──</code></pre>
+<pre><code>## ✓ ggplot2 3.3.3     ✓ purrr   0.3.4
+## ✓ tibble  3.1.2     ✓ dplyr   1.0.6
+## ✓ tidyr   1.1.3     ✓ stringr 1.4.0
+## ✓ readr   1.4.0     ✓ forcats 0.5.1</code></pre>
+<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>model_dir = &quot;/Volumes/im-lab/nas40t2/Data/PredictDB/GTEx_v8/models_v1/eqtl/mashr&quot;</code></pre>
+<pre class="r"><code>## install.packages(&quot;RSQLite&quot;)
+library(&quot;RSQLite&quot;)
+sqlite &lt;- dbDriver(&quot;SQLite&quot;)
+dbname &lt;- glue::glue(&quot;{model_dir}/Adipose_Subcutaneous.db&quot;) ## add full path if db file not in current directory
+## connect to db
+db = dbConnect(sqlite,dbname)
+## list tables
+dbListTables(db)</code></pre>
+<pre><code>## character(0)</code></pre>
+<p>Also checkout <a href="https://lab-notes.hakyimlab.org/post/2021/04/27/querying-predictdb-sqlite-databases/">this post</a></p>
