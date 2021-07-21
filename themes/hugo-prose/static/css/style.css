@@ -40,7 +40,7 @@ main {
 /* header and footer areas */
 .menu { box-shadow: 0px 10px 10px -5px rgba(0,0,0,0.1); }
 .menu {
-  background: #000000; /*  EDIT HKI header background color 155F83 is UChicago's blue 800000 is UChicago maroon */
+  background: #222222; /*  EDIT HKI header background color 155F83 is UChicago's blue 800000 is UChicago maroon */
 }.sticky-top {
   position: sticky;
   top: 0;
@@ -48,7 +48,7 @@ main {
 }
 .menu li, .terms li, .footer li { display: inline-block; }
 .article-meta { background: #f8f8f8; }
-footer { background: #000000; } /* EDIT HKI footer background color*/
+footer { background: #222222; } /* EDIT HKI footer background color*/
 .menu ul {
   padding: 1em 0 1em;
   display: flex;
