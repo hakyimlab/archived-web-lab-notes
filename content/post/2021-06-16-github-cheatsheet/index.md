@@ -31,3 +31,8 @@ echo .DS_Store >> .gitignore
 git add .gitignore
 git commit -m '.DS_Store banished!'
 ```
+
+## amend last commit message
+
+You can change the most recent commit message using the `git commit --amend` command.
+
