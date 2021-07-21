@@ -1,0 +1,173 @@
+---
+title: Get list of predictor SNPs and weights in predictdb
+author: Haky Im
+date: '2021-07-19'
+slug: get-list-of-predictor-snps-and-weights-in-predictdb
+categories:
+  - how_to
+tags: []
+editor_options: 
+  chunk_output_type: console
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>To get a list of SNPs and the corresponding weights to predict expression levels (or splicing) of a given gene, you will first need to download the databases where the prediction models are stored. For example, you can download them from <a href="https://zenodo.org/record/3518299#.YPXA4G5Olqs">here</a> more specifically <a href="https://zenodo.org/record/3518299/files/mashr_eqtl.tar?download=1">from this tar file</a></p>
+<p>On CRI they are located in <code>/gpfs/data/im-lab/nas40t2/Data/PredictDB/GTEx_v8/models_v1/eqtl/mashr/</code></p>
+<p>Here I will mount the drive to my local machine following <a href="https://lab-notes.hakyimlab.org/post/2021/07/12/map-cri-storage-to-your-computer/">these instructions</a></p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──</code></pre>
+<pre><code>## ✓ ggplot2 3.3.3     ✓ purrr   0.3.4
+## ✓ tibble  3.1.2     ✓ dplyr   1.0.6
+## ✓ tidyr   1.1.3     ✓ stringr 1.4.0
+## ✓ readr   1.4.0     ✓ forcats 0.5.1</code></pre>
+<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>model_dir = &quot;/Volumes/im-lab/nas40t2/Data/PredictDB/GTEx_v8/models_v1/eqtl/mashr&quot;</code></pre>
+<p>Get ensemblid for the gene. For example GSDMA’s ensid is ENSG00000167914</p>
+<pre class="r"><code>## install.packages(&quot;RSQLite&quot;)
+library(&quot;RSQLite&quot;)
+sqlite &lt;- dbDriver(&quot;SQLite&quot;)
+df = data.frame()
+dbnamelist= list.files(model_dir,pattern = &quot;*.db&quot;)
+for(dbname in dbnamelist)
+{
+  print(&quot;--&quot;)
+  print(dbname)
+  ## connect to db
+  db = dbConnect(sqlite,glue::glue(&quot;{model_dir}/{dbname}&quot;))
+  ## list tables
+  tempo &lt;- dbGetQuery(db,&quot;select * from weights where gene like &#39;ENSG00000167914%&#39;&quot;) ## % is wildcard, to avoid dealing with ENSG version number
+  if(nrow(tempo)&gt;0) 
+  {
+    tempo$tissue &lt;- gsub(&quot;mashr_&quot;,&quot;&quot;,gsub(&quot;.db&quot;,&quot;&quot;,dbname))
+    df = rbind(df,tempo)
+  }
+}</code></pre>
+<pre><code>## [1] &quot;--&quot;
+## [1] &quot;mashr_Adipose_Subcutaneous.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Adipose_Visceral_Omentum.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Adrenal_Gland.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Artery_Aorta.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Artery_Coronary.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Artery_Tibial.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Brain_Amygdala.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Brain_Anterior_cingulate_cortex_BA24.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Brain_Caudate_basal_ganglia.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Brain_Cerebellar_Hemisphere.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Brain_Cerebellum.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Brain_Cortex.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Brain_Frontal_Cortex_BA9.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Brain_Hippocampus.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Brain_Hypothalamus.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Brain_Nucleus_accumbens_basal_ganglia.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Brain_Putamen_basal_ganglia.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Brain_Spinal_cord_cervical_c-1.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Brain_Substantia_nigra.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Breast_Mammary_Tissue.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Cells_Cultured_fibroblasts.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Cells_EBV-transformed_lymphocytes.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Colon_Sigmoid.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Colon_Transverse.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Esophagus_Gastroesophageal_Junction.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Esophagus_Mucosa.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Esophagus_Muscularis.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Heart_Atrial_Appendage.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Heart_Left_Ventricle.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Kidney_Cortex.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Liver.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Lung.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Minor_Salivary_Gland.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Muscle_Skeletal.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Nerve_Tibial.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Ovary.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Pancreas.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Pituitary.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Prostate.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Skin_Not_Sun_Exposed_Suprapubic.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Skin_Sun_Exposed_Lower_leg.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Small_Intestine_Terminal_Ileum.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Spleen.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Stomach.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Testis.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Thyroid.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Uterus.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Vagina.db&quot;
+## [1] &quot;--&quot;
+## [1] &quot;mashr_Whole_Blood.db&quot;</code></pre>
+<pre class="r"><code>df %&gt;% count(rsid,varID) %&gt;% arrange(desc( n))</code></pre>
+<pre><code>##                      rsid                   varID  n
+## 1               rs3859191  chr17_39972461_G_A_b38 17
+## 2              rs28618095  chr17_39952822_T_C_b38 14
+## 3               rs4794821  chr17_39967950_T_C_b38  5
+## 4               rs4458030  chr17_39965453_G_A_b38  4
+## 5               rs4065876  chr17_39973253_G_A_b38  3
+## 6  chr17_39954836_G_C_b38  chr17_39954836_G_C_b38  2
+## 7               rs3916061  chr17_39971460_A_G_b38  2
+## 8              rs56326707  chr17_39973886_C_T_b38  2
+## 9              rs59269632  chr17_39969978_A_G_b38  2
+## 10             rs60667221  chr17_39954137_T_A_b38  2
+## 11               rs921651  chr17_39977669_G_A_b38  2
+## 12            rs113277605  chr17_40000142_C_T_b38  1
+## 13              rs3859192  chr17_39972395_C_T_b38  1
+## 14            rs397713502 chr17_39972331_A_AG_b38  1
+## 15            rs398100509 chr17_39966991_AC_A_b38  1
+## 16              rs4239225  chr17_39970859_G_A_b38  1
+## 17             rs56946324  chr17_39951713_C_A_b38  1
+## 18             rs60725845  chr17_39968377_T_G_b38  1
+## 19              rs7214085  chr17_40012842_T_C_b38  1
+## 20              rs7221814  chr17_39933464_A_G_b38  1
+## 21             rs72832971  chr17_39952366_C_T_b38  1
+## 22            rs796403983 chr17_39972785_AG_A_b38  1
+## 23              rs8077456  chr17_39972512_G_C_b38  1</code></pre>
+<pre class="r"><code>write_csv(df,&quot;~/Downloads/GSDMA-weights.csv&quot;)</code></pre>
+<p>Also checkout <a href="https://lab-notes.hakyimlab.org/post/2021/04/27/querying-predictdb-sqlite-databases/">this post</a></p>

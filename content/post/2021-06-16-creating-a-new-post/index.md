@@ -27,7 +27,9 @@ To publish an analysis note in the notebook, you need to have blogdown and hugo 
 
 # Publishing in the internal notebook
 - If we don't want to make the post publicly available, we should use the http://internal-notes.hakyimlab.org with the repo at https://github.com/hakyimlab/web-internal-notes
-- To move posts between internal or public notes, just move the specific folder under contents/post. For example, move the folder with all its contents in `~/Github/web-internal-notes/content/post/2020-10-29-first-note-hki/` to `~/Github/web-lab-notes/content/post/2020-10-29-first-note-hki/` or vice versa. When in doubt, publish first on the internal repo.
+
+# Moving posts between different websites 
+- To move posts between websites (lab-notes.hakyimlab.org, internal-notes.hakyimlab.org, predictdb.org, etc) just move the specific folder under contents/post. For example, move the folder with all its contents in `~/Github/web-internal-notes/content/post/2020-10-29-first-note-hki/` to `~/Github/web-lab-notes/content/post/2020-10-29-first-note-hki/` or vice versa. When in doubt, publish first on the internal repo.
 
 
 

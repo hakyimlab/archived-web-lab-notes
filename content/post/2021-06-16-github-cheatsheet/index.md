@@ -23,3 +23,11 @@ git commit -m "Initial commit"
 git remote add origin git@github.com:<YOUR ACCOUNT>/<YOUR REPOS>.git
 git push -u --force origin master
 ```
+
+## get rid of DS_Store files
+```
+find . -name .DS_Store -print0 | xargs -0 git rm -f --ignore-unmatch
+echo .DS_Store >> .gitignore
+git add .gitignore
+git commit -m '.DS_Store banished!'
+```
