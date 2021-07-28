@@ -199,6 +199,7 @@ h3.side-left { text-align: right; }
   background: transparent;
   border: none;
   border-bottom: 2px solid lightslategray;
+  color: #fff
 }
 .search-results b {
   font-weight: normal;
