@@ -121,6 +121,10 @@ Please contact storage@rt.cri.uchicago.edu to get your own scratch area in tarbe
   ```
 - Then run `sh submit_jobs.sh` 
 
+## Running interactive jobs
+-  To run an interactive shell, issue:     qsub -I
+
+
 ##### For more detail, please read <a href= "http://cri.uchicago.edu/wp-content/uploads/2015/02/Tarbell-User-Guide.html"> A detailed user guide on how to use our new cluster </a> 
 
 
