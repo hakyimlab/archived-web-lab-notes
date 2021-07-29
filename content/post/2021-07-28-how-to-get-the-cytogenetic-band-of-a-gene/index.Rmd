@@ -26,6 +26,7 @@ add cytegenetic band to genes
 # BiocManager::install("biomaRt")
 ## YOU MAY WANT TO RESTART R/RSTUDIO AFTER INSTAALLING BIOCMANAGER
 
+ensembl <- biomaRt::useMart(biomart="ENSEMBL_MART_ENSEMBL",dataset="hsapiens_gene_ensembl")
 ## the default build is hg38
 biomaRt::searchDatasets(mart = ensembl, pattern = "hsapiens")
 #                 dataset              description    version
@@ -41,7 +42,6 @@ ensembl37 <- biomaRt::useEnsembl(biomart = 'genes',
                          version = 'GRCh37')
 
 ## get the gene annotation with cytoband  from biomart
-ensembl <- biomaRt::useMart(biomart="ENSEMBL_MART_ENSEMBL",dataset="hsapiens_gene_ensembl")
 anno_gene <- biomaRt::getBM(attributes =c("ensembl_gene_id","external_gene_name","chromosome_name","start_position","end_position","band", "gene_biotype"),mart=ensembl)
 
 ## define function to add cytoband to gene
