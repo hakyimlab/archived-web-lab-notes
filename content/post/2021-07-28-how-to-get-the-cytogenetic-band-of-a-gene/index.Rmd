@@ -18,7 +18,7 @@ suppressMessages(library(RSQLite))
 
 ```
 
-add cytegenetic band to genes
+add cytogenetic band to genes
 ```{r}
 # install biomaRt if not installed 
 # if (!requireNamespace("BiocManager", quietly = TRUE))
@@ -33,7 +33,7 @@ biomaRt::searchDatasets(mart = ensembl, pattern = "hsapiens")
 #80 hsapiens_gene_ensembl Human genes (GRCh38.p13) GRCh38.p13
 
 ## To use hg19/grch37 use
-listEnsemblArchives()
+##              biomaRt::listEnsemblArchives()
 ##              name     date                                 url version current_release
 ## 1  Ensembl GRCh37 Feb 2014          https://grch37.ensembl.org  GRCh37                
 ## 2     Ensembl 104 May 2021 https://may2021.archive.ensembl.org     104               *
