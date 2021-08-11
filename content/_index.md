@@ -11,4 +11,4 @@ This is a public notebook with analysis bits, how to's, and other notes from the
 
 To add new posts, check [these instructions](https://lab-notes.hakyimlab.org/post/2021/06/16/creating-a-new-post/)
 
-Here are the lab's [internal notebook's repo](https://github.com/hakyimlab/web-internal-notes) and [internal notebook's website](http://internal-notes.hakyimlab.org) for draft material not ready for sharing publicly 
+[Click here for the lab's internal notebook's repo](https://github.com/hakyimlab/web-internal-notes) or [here for the internal notebook's website](http://internal-notes.hakyimlab.org) for draft material not ready for sharing publicly 
