@@ -124,6 +124,13 @@ Please contact storage@rt.cri.uchicago.edu to get your own scratch area in tarbe
 ## Running interactive jobs
 -  To run an interactive shell, issue:     qsub -I
 
+## Running R
+
+To run R in cri you need to load the following
+```
+module load gcc/6.2.0  
+module load R/4.0.3
+```
 
 ##### For more detail, please read <a href= "http://cri.uchicago.edu/wp-content/uploads/2015/02/Tarbell-User-Guide.html"> A detailed user guide on how to use our new cluster </a> 
 
