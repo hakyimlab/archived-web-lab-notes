@@ -3,7 +3,8 @@ title: Github Cheatsheet
 author: Haky Im
 date: '2021-06-16'
 slug: github-cheatsheet
-categories: []
+categories: 
+  - cheatsheet
 tags: []
 ---
 
