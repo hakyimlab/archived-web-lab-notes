@@ -23,3 +23,4 @@ Download Data:
 2. `cd controlled-access/download/jga/`
 3. Download: `get -r J-DU999991` (downloads locally, will update with instructions to download directly to Bionimbus)
 
+-[ ] ADD HOW TO DECRYPT HERE
