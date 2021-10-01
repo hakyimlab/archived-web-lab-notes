@@ -13,7 +13,7 @@ topics: []
 
 `/gpfs/data/im-lab/nas40t2/Data/References/mappings/UKB2GTEx_mapping.txt.gz` contains information for variants in UK Biobank genotypes. The columns are 
 
-```
+```{bash,eval=FALSE}
 variant	chromosome	position	non_effect_allele	effect_allele	rsid	zscore	panel_variant_id
 1:692794:CA:C	chr1	757414	CA	C	1:692794_CA_C	1	NA
 1:693731:A:G	chr1	758351	A	G	rs12238997	1	chr1_758351_A_G_b38
