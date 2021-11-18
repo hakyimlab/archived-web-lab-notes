@@ -1,0 +1,10 @@
+---
+title: Bigquery GTEx v8 results
+author: Haky Im
+date: '2021-11-18'
+slug: bigquery-gtex-v8-results
+categories:
+  - how_to
+tags: []
+---
+
