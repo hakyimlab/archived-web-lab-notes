@@ -4,5 +4,6 @@ public/*
 public/*/*
 .DS_Store
 *.DS_Store
+.hugo_build.lock
 
 .Rproj.user
