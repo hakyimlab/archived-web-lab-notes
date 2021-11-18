@@ -6,5 +6,47 @@ slug: bigquery-gtex-v8-results
 categories:
   - how_to
 tags: []
+editor_options: 
+  chunk_output_type: console
 ---
+
+```{r}
+library(tidyverse)
+library(bigrquery)
+```
+
+
+```{r}
+## connect to dapg dataset
+dapg_dataset = "GTEx_V8_DAPG"
+dapg_con <- DBI::dbConnect(
+  bigrquery::bigquery(), 
+  project = "gtex-awg-im",
+  dataset = dapg_dataset,
+  billing = "gtex-awg-im")
+##
+DBI::dbListTables(dapg_con)
+
+## connect to gtex-awg-im:annotations.gencode_v26_all
+gencode_con <- DBI::dbConnect(
+  bigrquery::bigquery(), 
+  project = "gtex-awg-im",
+  dataset = "annotations",
+  billing = "gtex-awg-im")
+gencode_tbl <- tbl(gencode_con, "gencode_v26_all")
+gencode_df <- gencode_tbl %>% collect()
+
+## connect to prediction weights gtex-awg-im:GTEx_V8_PF_MASHR_EUR_v1.weights_eqtl
+mashrpred_con <- DBI::dbConnect(
+  bigrquery::bigquery(), 
+  project = "gtex-awg-im",
+  dataset = "GTEx_V8_PF_MASHR_EUR_v1",
+  billing = "gtex-awg-im")
+##
+DBI::dbListTables(mashrpred_con)
+
+```
+
+See more examples of queries [in this link](https://hakyimlab.github.io/bigquery-covid19/query-phenomexcan.html)
+
 
