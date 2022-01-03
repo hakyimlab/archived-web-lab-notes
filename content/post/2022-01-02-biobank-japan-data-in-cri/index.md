@@ -9,7 +9,7 @@ tags: []
 
 **BBJ data directory:** `\gpfs/data/im-lab/nas40t2/Data/BBJ`
 
-I first downloaded and decrypted Biobank Japan data ([instructions](http://127.0.0.1:4321/post/2020/07/30/downloading-data-from-biobank-japan/)), then organized into subdirectories `BBJ-genotypes-decrypted` and `BBJ-phenotypes-decrypted`, in their original form.
+I first downloaded and decrypted Biobank Japan data ([instructions](https://lab-notes.hakyimlab.org/post/2020/07/30/downloading-data-from-biobank-japan/)), then organized into subdirectories `BBJ-genotypes-decrypted` and `BBJ-phenotypes-decrypted`, in their original form.
 
 ## Phenotypes
 
