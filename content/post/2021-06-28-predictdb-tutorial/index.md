@@ -2,7 +2,6 @@
 title: "PredictDB Tutorial"
 author: "Festus Nyasimi"
 date: '2021-06-28'
-output: pdf_document
 categories: []
 tags: []
 slug: predictdb-tutorial
