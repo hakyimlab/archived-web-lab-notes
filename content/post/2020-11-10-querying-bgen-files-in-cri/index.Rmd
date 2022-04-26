@@ -1,6 +1,6 @@
 ---
 title: Querying bgen files in CRI
-author: sabrina
+author: Sabrina Mi
 date: '2020-11-10'
 slug: querying-bgen-files-in-cri
 categories: []
