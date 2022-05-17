@@ -8,7 +8,7 @@ instructions](https://ljvmiranda921.github.io/notebook/2018/01/31/running-a-jupy
 
 ### Remote side
 
-Make sure you’ve install the required Python modules and packages.
+Make sure you’ve installed the required Python modules and packages.
 
 `$ ssh <username>@gardner.cri.uchicago.edu`
 `$ jupyter notebook --no-browser --port=XXXX`
