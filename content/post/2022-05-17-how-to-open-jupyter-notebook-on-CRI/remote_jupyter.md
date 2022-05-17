@@ -10,7 +10,8 @@ instructions](https://ljvmiranda921.github.io/notebook/2018/01/31/running-a-jupy
 
 Make sure you’ve installed the required Python modules and packages.
 
-`$ ssh <username>@gardner.cri.uchicago.edu`
+`$ ssh <username>@gardner.cri.uchicago.edu` <br/>
+
 `$ jupyter notebook --no-browser --port=XXXX`
 
 The default port will be 8888, and “–no-browser” is required because if
@@ -28,7 +29,9 @@ If you set port=8889, the result should be like the following:
 ### Local machine
 
 Open a new terminal and run the following command.
+
 `$ ssh -N -f -L localhost:YYYY:localhost:XXXX <username>@gardner.cri.uchicago.edu`
+
 Select any port=YYYY which you haven’t used for other work.
 
 Then open a browser, type in `localhost=<YYYY>` and copy and paste the
