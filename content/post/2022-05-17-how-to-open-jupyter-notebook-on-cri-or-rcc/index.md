@@ -16,11 +16,12 @@ This is a workflow to show how to open jupyter notebook on CRI or RCC. There are
 ### Remote side
 Make sure you've installed the required Python modules and packages.
 
+```$ ssh <username>@gardner.cri.uchicago.edu`
 
-`$ ssh <username>@gardner.cri.uchicago.edu`
-<br/>
 
-`$ jupyter notebook --no-browser --port=XXXX`
+$ jupyter notebook --no-browser --port=XXXX`
+```
+
 
 The default port will be 8888, and "--no-browser" is required because if you do not specify --no-browser --ip=, the web browser will be launched on the node and the URL returned cannot be used on your local machine.
 
