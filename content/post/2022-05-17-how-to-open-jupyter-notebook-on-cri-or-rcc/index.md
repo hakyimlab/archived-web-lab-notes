@@ -13,6 +13,9 @@ tags:
 
 This is a workflow to show how to open jupyter notebook on CRI or RCC. There are some detailed instructions here, [CRI's instructions](https://rcc.uchicago.edu/docs/software/environments/python/index.html) and [More general instructions](https://ljvmiranda921.github.io/notebook/2018/01/31/running-a-jupyter-notebook/)
 
+
+> If you want to highligh some text
+
 ### Remote side
 Make sure you've installed the required Python modules and packages.
 
