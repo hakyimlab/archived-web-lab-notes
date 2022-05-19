@@ -16,7 +16,8 @@ This is a workflow to show how to open jupyter notebook on CRI or RCC. There are
 ### Remote side
 Make sure you've installed the required Python modules and packages.
 
-```$ ssh <username>@gardner.cri.uchicago.edu`
+```
+$ ssh <username>@gardner.cri.uchicago.edu`
 
 
 $ jupyter notebook --no-browser --port=XXXX`
