@@ -1,0 +1,431 @@
+---
+title: QGT Training
+author: Haky Im
+date: '2022-06-10'
+slug: qgt-training
+categories:
+  - Lab
+tags: []
+editor_options: 
+  chunk_output_type: console
+---
+
+
+Edit Notes:
+  - gave /cloud/project/QGT-Columbia-HKI-repo/box_files/repos/fastenloc-master/src/fastenloc  execute permissions but I got this error:
+ **bash: /cloud/project/QGT-Columbia-HKI-repo/box_files/repos/fastenloc-master/src/fastenloc: cannot execute binary file: Exec format error**
+  when I ran this code:
+  **$FASTENLOCSOFT -eqtl $eqtl_annotation_gzipped -gwas $gwas_data_gzipped -t $TISSUE**
+  
+
+# Goals of Lab 
+ - Predict whole blood expression
+ - Check how well the prediction works with GEUVADIS expression data
+ - Run association between predicted expression and a simulated phenotype
+ - Calculate association between expression levels and coronary artery disease risk using s-predixcan
+ - Fine-map the coronary artery disease gwas results using torus
+ - Calculate colocalization probability using fastenloc
+ - Run transcriptome-wide mendelian randomization in one locus of interest
+ 
+# Inital Remarks 
+ - We ask you to actively participate in today’s hands on activities. Notice that we may ask you to share your screen for pedagogic purposes.
+ - If you have any concerns about this, please ask me or one of the TAs for assistance. We are here to help you learn.
+ -  Through out the lab you will see code chucks that are written with bash, eval=FALSE in place of R. These chunks are meant to be run in your Rstudio terminal and not in the Rmarkdown file itself.
+ -  A general comment on workflow: we will run the PrediXcan, Colocalization, and Mendelian Randomization in the terminal and then we will visualize the results using R.
+
+# Set Up 
+```{r, eval=FALSE}
+library(tidyverse)
+```
+
+```{bash, eval=FALSE}
+PRE="/cloud/project/"
+cd $PRE/QGT-Columbia-HKI-repo
+conda activate imlabtools
+```
+
+[ ] Go over the directory structure
+```{r define names of directories, eval=FALSE}
+print(getwd())
+
+lab="/cloud/project/QGT-Columbia-HKI-repo/"
+CODE=glue::glue("{lab}/code")
+source(glue::glue("{CODE}/load_data_functions.R"))
+source(glue::glue("{CODE}/plotting_utils_functions.R"))
+
+PRE="/cloud/project/QGT-Columbia-HKI-repo/box_files"
+MODEL=glue::glue("{PRE}/models")
+DATA=glue::glue("{PRE}/data")
+RESULTS=glue::glue("{PRE}/results")
+METAXCAN=glue::glue("{PRE}/repos/MetaXcan-master/software")
+FASTENLOC=glue::glue("{PRE}/repos/fastenloc-master")
+TORUS=glue::glue("{PRE}/repos/torus-master")
+TWMR=glue::glue("{PRE}/repos/TWMR-master")
+```
+
+```{r read gene annotation file, eval=FALSE}
+# This is a reference table we'll use a lot throughout the lab. It contains information about the genes.
+gencode_df = load_gencode_df()
+```
+
+```{bash, eval=FALSE}
+## here we define names of directories in bash
+export PRE="/cloud/project/QGT-Columbia-HKI-repo/box_files"
+export LAB="/cloud/project/QGT-Columbia-HKI-repo/"
+export CODE=$LAB/code
+export DATA=$PRE/data
+export MODEL=$PRE/models
+export RESULTS=$PRE/results
+export METAXCAN=$PRE/repos/MetaXcan-master/software
+export TWMR=$PRE/repos/TWMR-master
+```
+
+# Transcriptome-wide Association Methods
+
+Now we will perform a transcriptome-wide association analysis using the PrediXcan, also known as TWAS, suite of tools. We start by predicting the expression levels of genes using the genotype data and the prediction weights. Then we perform an association between the predicted expression and the phenotype
+
+
+## Predicting Expression Using METAXCAN
+
+In this section we will predict expression of genes in whole blood using the Predict.py code in the METAXCAN folder.
+
+https://raw.githubusercontent.com/hakyimlab/QGT-Columbia-HKI/master/extras/figures/PrediXcan-run.png
+
+### Tips:
+
+ - Remember you need to copy and paste this code chunk into the terminal to run it. Also make sure you activated the imlabtools environment which has all the necessary python modules.
+ - Make sure all the paths and file names are correct
+ 
+```{bash, eval=FALSE}
+printf "Predict expression\n\n"
+python3 $METAXCAN/Predict.py \
+--model_db_path $PRE/models/gtex_v8_en/en_Whole_Blood.db \
+--vcf_genotypes $DATA/predixcan/genotype/filtered.vcf.gz \
+--vcf_mode genotyped \
+--variant_mapping $DATA/predixcan/gtex_v8_eur_filtered_maf0.01_monoallelic_variants.txt.gz id rsid \
+--on_the_fly_mapping METADATA "chr{}_{}_{}_{}_b38" \
+--prediction_output $RESULTS/predixcan/Whole_Blood__predict.txt \
+--prediction_summary_output $RESULTS/predixcan/Whole_Blood__summary.txt \
+--verbosity 9 \
+--throw
+```
+ 
+ 
+ - run following code in the console to get information on reported prediction performance
+ 
+ 
+```{r, eval=FALSE}
+
+prediction_fp = glue::glue("{RESULTS}/predixcan/Whole_Blood__predict.txt")
+
+## Read the Predict.py output into a dataframe. This function reorganizes the data and adds gene names.
+predicted_expression = load_predicted_expression(prediction_fp, gencode_df)
+
+## (optional) take a look at what load_predicted_expression does by typing the load_predicted_expression (without the parenthesis)
+## it reformats the matrix into a long format, more convenient for comparison with observed expression
+
+head(predicted_expression)
+
+## read summary of prediction, number of SNPs per gene, cross validated prediction performance
+prediction_summary = load_prediction_summary(glue::glue("{RESULTS}/predixcan/Whole_Blood__summary.txt"), gencode_df)
+## number of genes with a prediction model
+dim(prediction_summary)
+head(prediction_summary)
+
+print("distribution of prediction performance r2")
+summary(prediction_summary$pred_perf_r2)
+
+```
+
+## (Optional) Assess Actual Prediction Performance
+Note: *Genes ERAP1 (ENSG00000164307) PEX6 (ENSG00000124587) are not present in predicted expression because the genes for perdicted expression are based soley in CHR22 *
+
+```{r, eval=FALSE}
+## download and read observed expression data from GEUVADIS 
+## from https://uchicago.box.com/s/4y7xle5l0pnq9d1fwmthe2ewhogrnlrv
+
+obs_exp<- read_csv("Optional/GEUVADIS.observed_df.csv")
+
+## TODO: delete this note ## Remove the version number from the gene_id's (ENSG000XXX.ver) ???
+head(predicted_expression)
+
+## Q: how many genes were predicted?
+length(unique(predicted_expression$gene_id))
+
+## merge predicted expression with observed expression data (by IID and gene)
+fullset=inner_join(predicted_expression, obs_exp, by = c("gene_id","IID"))
+
+## calculate spearman correlation for all genes
+genelist = unique(predicted_expression$gene_id)
+corvec = rep(NA,length(genelist))
+names(corvec) = genelist
+for(gg in 1:length(genelist))
+{
+  ind = fullset$gene_id==genelist[gg]
+  corvec[gg] = cor(fullset$predicted_expression[ind], fullset$observed_expression[ind])
+}
+
+## plot the histogram of the prediction performance
+hist(corvec)
+
+## list the top 10 best performing genes
+head(sort(corvec,decreasing = TRUE),2)
+tail(sort(corvec,decreasing = TRUE),2)
+
+## plot the correlation of the top 2 best performing genes bottom 2
+
+geneid = "ENSG00000100376"
+genename = gencode_df %>% filter(gene_id==geneid) %>% .[["gene_name"]]
+fullset %>% filter(gene_id==geneid) %>% ggplot(aes(observed_expression, predicted_expression))+geom_point()+ggtitle(paste(genename, "-",geneid))
+
+geneid = "ENSG00000075234"
+genename = gencode_df %>% filter(gene_id==geneid) %>% .[["gene_name"]]
+fullset %>% filter(gene_id==geneid) %>% ggplot(aes(observed_expression, predicted_expression))+geom_point()+ggtitle(paste(genename, "-", geneid))
+
+geneid = "ENSG00000070371"
+genename = gencode_df %>% filter(gene_id==geneid) %>% .[["gene_name"]]
+fullset %>% filter(gene_id==geneid) %>% ggplot(aes(observed_expression, predicted_expression))+geom_point()+ggtitle(paste(genename, "-", geneid))
+
+geneid = "ENSG00000184164"
+genename = gencode_df %>% filter(gene_id==geneid) %>% .[["gene_name"]]
+fullset %>% filter(gene_id==geneid) %>% ggplot(aes(observed_expression, predicted_expression))+geom_point()+ggtitle(paste(genename, "-", geneid))
+
+```
+
+## Run Association with a Simulated Phenotype 
+Edit Note: Add mathematical formula 
+
+```{bash, eval=FALSE}
+
+export PHENO="sim.spike_n_slab_0.01_pve0.1"
+
+printf "association\n\n"
+python3 $METAXCAN/PrediXcanAssociation.py \
+--expression_file $RESULTS/predixcan/Whole_Blood__predict.txt \
+--input_phenos_file $DATA/predixcan/phenotype/$PHENO.txt \
+--input_phenos_column pheno \
+--output $RESULTS/predixcan/$PHENO/Whole_Blood__association.txt \
+--verbosity 9 \
+--throw
+
+```
+
+More predicted phenotypes can be found in $DATA/predixcan/phenotype/. The naming of the phenotypes provides information about the genetic architecture: the number after pve is the proportion of variance of Y explained by the genetic component of expression. The number after spike_n_slab represents the probability that a gene is causal π
+(i.e. prob β≠0
+)
+
+## Looking at Association Results 
+
+```{r, eval=FALSE}
+## read association results
+PHENO="sim.spike_n_slab_0.01_pve0.1"
+
+predixcan_association = load_predixcan_association(glue::glue("{RESULTS}/predixcan/{PHENO}/Whole_Blood__association.txt"), gencode_df)
+
+## take a look at the results
+dim(predixcan_association)
+predixcan_association %>% arrange(pvalue) %>% head
+predixcan_association %>% arrange(pvalue) %>% ggplot(aes(pvalue)) + geom_histogram(bins=20)
+## compare distribution against the null (uniform)
+gg_qqplot(predixcan_association$pvalue, max_yval = 40)
+
+```
+
+## Comparing the Estimated Effect Size with True Effect Size
+
+```{r, eval=FALSE}
+
+truebetas = load_truebetas(glue::glue("{DATA}/predixcan/phenotype/gene-effects/{PHENO}.txt"), gencode_df)
+betas = (predixcan_association %>% 
+               inner_join(truebetas,by=c("gene"="gene_id")) %>%
+               select(c('estimated_beta'='effect', 
+                        'true_beta'='effect_size',
+                        'pvalue', 
+                        'gene_id'='gene', 
+                        'gene_name'='gene_name.x', 
+                        'region_id'='region_id.x')))
+betas %>% arrange(pvalue) %>% head
+## do you see examples of potential LD contamination?
+betas %>% ggplot(aes(estimated_beta, true_beta))+geom_point()+geom_abline()
+
+```
+
+# Summary PrediXcan
+Now we will use the summary results from a GWAS of coronary artery disease to calculate the association between the genetic component of the expression of genes and coronary artery disease risk. We will use the SPrediXcan.py.
+
+The GWAS results (harmonized and imputed) for coronary artery disease are available in $PRE/spredixcan/data/
+
+## Running S-PrediXcan 
+
+```{bash, eval=FALSE}
+
+python $METAXCAN/SPrediXcan.py \
+--gwas_file  $DATA/spredixcan/imputed_CARDIoGRAM_C4D_CAD_ADDITIVE.txt.gz \
+--snp_column panel_variant_id --effect_allele_column effect_allele --non_effect_allele_column non_effect_allele --zscore_column zscore \
+--model_db_path $MODEL/gtex_v8_mashr/mashr_Whole_Blood.db \
+--covariance $MODEL/gtex_v8_mashr/mashr_Whole_Blood.txt.gz \
+--keep_non_rsid --additional_output --model_db_snp_key varID \
+--throw \
+--output_file $RESULTS/spredixcan/eqtl/CARDIoGRAM_C4D_CAD_ADDITIVE__PM__Whole_Blood.csv
+
+```
+
+## Plot and Interpret Results 
+
+```{r, eval=FALSE}
+#Sort1 or ENSG00000134243 is still not present
+spredixcan_association = load_spredixcan_association(glue::glue("{RESULTS}/spredixcan/eqtl/CARDIoGRAM_C4D_CAD_ADDITIVE__PM__Whole_Blood.csv"), gencode_df)
+dim(spredixcan_association)
+spredixcan_association %>% arrange(pvalue) %>% head
+spredixcan_association %>% arrange(pvalue) %>% ggplot(aes(pvalue)) + geom_histogram(bins=20)
+
+gg_qqplot(spredixcan_association$pvalue)
+filter(spredixcan_association, gene_name=="AHSG")
+```
+
+- *Question:* SORT1, considered to be a causal gene for LDL cholesterol and as a consequence of coronary artery disease, is not found here. Why?
+ - Hint: Tissue 
+
+## Excerise 
+ -[]Run s-predixcan with liver model, do you find SORT1? Is it significant?
+```{bash, eval=FALSE}
+#loction Liver models 
+#/cloud/project/QGT-Columbia-HKI-repo/box_files/models/gtex_v8_mashr/
+python $METAXCAN/SPrediXcan.py \
+--gwas_file  $DATA/spredixcan/imputed_CARDIoGRAM_C4D_CAD_ADDITIVE.txt.gz \
+--snp_column panel_variant_id --effect_allele_column effect_allele --non_effect_allele_column non_effect_allele --zscore_column zscore \
+--model_db_path $MODEL/gtex_v8_mashr/mashr_Liver.db \
+--covariance $MODEL/gtex_v8_mashr/mashr_Liver.txt.gz \
+--keep_non_rsid --additional_output --model_db_snp_key varID \
+--throw \
+--output_file $RESULTS/spredixcan/eqtl/CARDIoGRAM_C4D_CAD_ADDITIVE__PM__Liver.csv
+```
+
+```{r, eval=FALSE}
+spredixcan_association_L= load_spredixcan_association(glue::glue("{RESULTS}/spredixcan/eqtl/CARDIoGRAM_C4D_CAD_ADDITIVE__PM__Liver.csv"), gencode_df)
+dim(spredixcan_association_L)
+spredixcan_association_L %>% arrange(pvalue) %>% head
+spredixcan_association_L %>% arrange(pvalue) %>% ggplot(aes(pvalue)) + geom_histogram(bins=20)
+
+gg_qqplot(spredixcan_association_L$pvalue)
+filter(spredixcan_association_L, gene_name=="SORT1")
+```
+ -[]Compare zscores in liver and whole blood.
+ 
+```{r, eval=FALSE}
+spredixcan_association_L=rename(spredixcan_association_L, zscore_liver = "zscore")
+head(spredixcan_association_L)
+test=left_join(spredixcan_association, spredixcan_association_L, by="gene_name")
+test=select(test,"gene_name","zscore","zscore_liver")
+test %>% arrange(zscore_liver) %>% head
+```
+ 
+## (Optional) Run MultiXcan
+Multixcan aggregates information across multiple tissues to boost the power to detect association. It was developed motivated by the fact that eQTLs are shared across multiple tissues, i.e. many genetic variants that regulate expression are common across tissues. *
+
+```{bash, eval=FALSE}
+
+python $METAXCAN/SMulTiXcan.py \
+--models_folder $MODEL/gtex_v8_mashr \
+--models_name_pattern "mashr_(.*).db" \
+--snp_covariance $MODEL/gtex_v8_expression_mashr_snp_smultixcan_covariance.txt.gz \
+--metaxcan_folder $RESULTS/spredixcan/eqtl/ \
+--metaxcan_filter "CARDIoGRAM_C4D_CAD_ADDITIVE__PM__(.*).csv" \
+--metaxcan_file_name_parse_pattern "(.*)__PM__(.*).csv" \
+--gwas_file $DATA/spredixcan/imputed_CARDIoGRAM_C4D_CAD_ADDITIVE.txt.gz \
+--snp_column panel_variant_id --effect_allele_column effect_allele --non_effect_allele_column non_effect_allele --zscore_column zscore --keep_non_rsid --model_db_snp_key varID \
+--cutoff_condition_number 30 \
+--verbosity 9 \
+--throw \
+--output $RESULTS/smultixcan/eqtl/CARDIoGRAM_C4D_CAD_ADDITIVE_smultixcan.txt
+
+```
+verbosity 9 will output fewer lines during computation
+
+# Colocalization Methods 
+
+Colocalization methods seek to estimate the probability that the complex trait and expression causal variants are the same. We favor methods that calculate the probability of causality for each trait (posterior inclusion probability), called fine-mapping methods. Here we use torus for fine-mapping and fastENLOC for colocalization.
+
+## GWAS Summary Statistics to Torus Format
+
+We ran code in our setup to format GWAS summary statistics into a format that the fine-mapping method torus can understand. If you are curious you can find the code in the Lab_setup.Rmd.
+
+## Fine-Map GWAS Results 
+
+- We run torus due to time limitation but ideally we would like to run a method that allows multiple causal variants per locus, such as DAP-G or SusieR. 
+
+- Torus has been precompiled and placed within the PATH
+
+```{bash, eval=FALSE}
+export TORUSOFT=/cloud/project/QGT-Columbia-HKI-repo/box_files/repos/torus-master/src/torus.static
+
+$TORUSOFT -d $PRE/data/fastenloc/CARDIoGRAM_C4D_CAD_ADDITIVE.zval.gz --load_zval -dump_pip $PRE/data/fastenloc/CARDIoGRAM_C4D_CAD_ADDITIVE.gwas.pip
+cd $PRE/data/fastenloc
+gzip CARDIoGRAM_C4D_CAD_ADDITIVE.gwas.pip
+cd $PRE
+
+```
+
+We can take a quick look at the z-values and fine-mapping PIPs (posterior probability of causality):
+```{bash, eval=FALSE}
+cd $PRE/data/fastenloc
+zless CARDIoGRAM_C4D_CAD_ADDITIVE.zval.gz
+zless CARDIoGRAM_C4D_CAD_ADDITIVE.gwas.pip.gz
+```
+
+## Calculate Colocalization with fastENLOC
+
+```{bash, eval=FALSE}
+ * 
+## you can take a look at the tutorial https://github.com/xqwen/fastenloc/tree/master/tutorial
+
+export eqtl_annotation_gzipped=$PRE/data/fastenloc/FASTENLOC-gtex_v8.eqtl_annot.vcf.gz
+export gwas_data_gzipped=$PRE/data/fastenloc/CARDIoGRAM_C4D_CAD_ADDITIVE.gwas.pip.gz
+export TISSUE=Whole_Blood
+export FASTENLOCSOFT=/cloud/project/QGT-Columbia-HKI-repo/box_files/repos/fastenloc-master/src/fastenloc
+##export FASTENLOCSOFT=fastenloc
+##export FASTENLOCSOFT=/Users/owenmelia/projects/finemapping_bin/src/fastenloc/src/fastenloc
+
+mkdir $RESULTS/fastenloc/
+cd $RESULTS/fastenloc/
+$FASTENLOCSOFT -eqtl $eqtl_annotation_gzipped -gwas $gwas_data_gzipped -t $TISSUE 
+
+#[-total_variants total_snp] [-thread n] [-prefix prefix_name] [-s shrinkage]
+
+```
+
+## Analyze Results 
+```{r, eval=FALSE}
+## optional - compare with s-predixcan results
+
+fastenloc_results = load_fastenloc_coloc_result(glue::glue("{RESULTS}/fastenloc/enloc.sig.out"))
+spredixcan_and_fastenloc = inner_join(spredixcan_association, fastenloc_results, by=c('gene'='Signal'))
+ggplot(spredixcan_and_fastenloc, aes(RCP, -log10(pvalue))) + geom_point()
+
+## which genes are both colocalized (rcp>0.10) and significantly associated (pvalue<0.05/number of tests)
+
+
+```
+
+# Mendelian Randomization Methods
+
+## run TWMR (for a locus)
+```{r, eval=FALSE}
+# Load the 'analyseMR' function
+source(glue::glue("{CODE}/TWMR_script.R"))
+
+# Collect the list of genes available to run
+gene_lst <- list.files(TWMR)
+gene_lst <- gene_lst[str_detect(gene_lst, "ENS.*")]
+gene_lst <- (gsub("\\..*", "", gene_lst) %>% unique)
+
+# Set the gene and run. The function writes output to a file.
+for (gene in gene_lst) {
+  analyseMR(gene, TWMR)
+}
+
+twmr_results <- load_twmr_results(TWMR, gencode_df)
+
+twmr_results %>% select(gene_name,region_id, Nsnps,Ngene,P) 
+```
+
