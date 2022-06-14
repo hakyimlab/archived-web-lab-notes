@@ -3,7 +3,10 @@ title: How to use CRI cluster
 author: ''
 date: '2021-06-10'
 slug: how-to-use-cri-cluster
-categories: []
+categories:
+  - how_to
+  - cri
+  - gardner
 tags: []
 ---
 
