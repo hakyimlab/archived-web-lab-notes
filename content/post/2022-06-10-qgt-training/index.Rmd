@@ -42,6 +42,8 @@ editor_options:
 - R code chunks also have "eval=FALSE". When you click on the green triangle, the code will run in the R console but not when we knit the document. This just happened to be more convenient for us to generate a knitted html to be shared [here](https://lab-notes.hakyimlab.org/post/2022/06/10/qgt-training/).
 
 # Set Up 
+
+- [ ] Open the RStudio cloud project [here](https://rstudio.cloud/spaces/232505/content/4013383)
 - [ ] Load Rstudio Libraries 
 ```{r,eval=FALSE}
 library(tidyverse)
@@ -639,7 +641,7 @@ plot the coloc result with the sensitivity function because weird effects are mu
 sensitivity(susie.res,"H4 > 0.9",row=1,dataset1=ff,dataset2=gg,)
 ```
 
-# Questionnaire 05 TODO: change the questionnaire
+# Questionnaire 05 
 Colocalization [Fill out this form](https://forms.gle/8fiYqfiqv31XHsUz9)
 
 
