@@ -1,5 +1,5 @@
 ---
-title: QGT Training
+title: Transcriptome QGT Training 2022
 author: Haky Im
 date: '2022-06-10'
 slug: qgt-training
@@ -13,16 +13,6 @@ editor_options:
 <script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
 
 
-<p>Note: this is a rough draft/work in progress for discussion.
-- Once we successfully run through the Lab we will need remove the results files and run through on as an assignment</p>
-<p>Edit Notes:
-- Do we want to have this all in one R Markdown or do we want to break this up by section?
-- Adding photos here or have accompanying Power Point?
-- Do we want to add to the MR section in terms of description or viewing the results?
-- gave /cloud/project/QGT-Columbia-HKI-repo/box_files/repos/fastenloc-master/src/fastenloc execute permissions but I got this error:
-<strong>bash: /cloud/project/QGT-Columbia-HKI-repo/box_files/repos/fastenloc-master/src/fastenloc: cannot execute binary file: Exec format error</strong>
-when I ran this code:
-<strong>$FASTENLOCSOFT -eqtl $eqtl_annotation_gzipped -gwas $gwas_data_gzipped -t $TISSUE</strong></p>
 <div id="goals-of-lab" class="section level1">
 <h1>Goals of Lab</h1>
 <ul>
@@ -32,25 +22,56 @@ when I ran this code:
 <li>Calculate association between expression levels and coronary artery disease risk using s-predixcan</li>
 <li>Fine-map the coronary artery disease gwas results using torus</li>
 <li>Calculate colocalization probability using fastenloc</li>
-<li>Run transcriptome-wide mendelian randomization in one locus of interest</li>
+<li>(skip) Run transcriptome-wide mendelian randomization in one locus of interest</li>
+<li>Run cTWAS (fine-map SNPs and genes jointly)</li>
 </ul>
 </div>
 <div id="inital-remarks" class="section level1">
 <h1>Inital Remarks</h1>
 <ul>
-<li>We ask you to actively participate in today’s hands on activities. Notice that we may ask you to share your screen for pedagogic purposes.</li>
-<li>If you have any concerns about this, please ask me or one of the TAs for assistance. We are here to help you learn.</li>
-<li>Through out the lab you will see code chucks that are written with bash, eval=FALSE in place of R. These chunks are meant to be run in your Rstudio terminal and not in the Rmarkdown file itself.</li>
-<li>A general comment on workflow: we will run the PrediXcan, Colocalization, and Mendelian Randomization in the terminal and then we will visualize the results using R.</li>
+<li><p>We ask you to actively participate in today’s hands on activities. <strong>Notice that we may ask you to share your screen for pedagogic purposes.</strong></p></li>
+<li><p>If you have any concerns about this, please ask me or one of the TAs for assistance. We are here to help you learn.</p></li>
+<li><p>After each section, we ask you to fill out the questionnaires</p></li>
+<li><p>01 Preliminary <a href="https://forms.gle/FDwPcjLFynqQP7Fd8" class="uri">https://forms.gle/FDwPcjLFynqQP7Fd8</a></p></li>
+<li><p>02 Prediction <a href="https://forms.gle/CZYGyNdfNVH2W9QF7" class="uri">https://forms.gle/CZYGyNdfNVH2W9QF7</a></p></li>
+<li><p>03 PrediXcan <a href="https://forms.gle/Z8YdYjgYs2zQY5cP6" class="uri">https://forms.gle/Z8YdYjgYs2zQY5cP6</a></p></li>
+<li><p>04 S-PrediXcan <a href="https://forms.gle/VVMYsP7u5Fh18fSY7" class="uri">https://forms.gle/VVMYsP7u5Fh18fSY7</a></p></li>
+<li><p>05 Colocalization <a href="https://forms.gle/8fiYqfiqv31XHsUz9" class="uri">https://forms.gle/8fiYqfiqv31XHsUz9</a></p></li>
+<li><p>06 cTWAS <a href="https://forms.gle/ZpuEuv8Xmxw1eDPf6" class="uri">https://forms.gle/ZpuEuv8Xmxw1eDPf6</a></p>
+<ul>
+<li>Name is a mandatory field. You can use your name or a pseudonymn. Just keep using the same name for each submission</li>
+<li>We will ask you to submit partial set of answers so that we can get a sense of where people are</li>
+</ul></li>
+<li><p>Through out the lab you will see code chucks that are written with bash, eval=FALSE in place of R. These chunks are meant to be run in your Rstudio terminal and not in the Rmarkdown file itself.</p></li>
+<li><p>R code chunks also have “eval=FALSE”. When you click on the green triangle, the code will run in the R console but not when we knit the document. This just happened to be more convenient for us to generate a knitted html to be shared <a href="https://lab-notes.hakyimlab.org/post/2022/06/10/qgt-training/">here</a>.</p></li>
 </ul>
 </div>
 <div id="set-up" class="section level1">
 <h1>Set Up</h1>
-<pre class="r"><code>library(tidyverse)</code></pre>
-<pre class="bash"><code>PRE=&quot;/cloud/project/&quot;
-cd $PRE/QGT-Columbia-HKI-repo
-conda activate imlabtools</code></pre>
-<p>[ ] Go over the directory structure</p>
+<ul class="task-list">
+<li><input type="checkbox" disabled="" />
+Load Rstudio Libraries</li>
+</ul>
+<pre class="r"><code>library(tidyverse)
+
+## packages needed for susie+coloc
+library(data.table)
+library(BEDMatrix)
+library(Rfast)
+library(susieR)
+library(coloc)
+##library(tidyverse)</code></pre>
+<p>-[ ] Navigate to starting directory</p>
+<pre class="bash"><code>cd &quot;/cloud/project/&quot;</code></pre>
+<ul class="task-list">
+<li><input type="checkbox" disabled="" />
+activate the the imlabtools environment, which will make sure that the right version of python modules are available</li>
+</ul>
+<pre class="bash"><code>conda activate imlabtools</code></pre>
+<ul class="task-list">
+<li><input type="checkbox" disabled="" />
+To define some variables to access the data more easily within the R session, run the following r chunk</li>
+</ul>
 <pre class="r"><code>print(getwd())
 
 lab=&quot;/cloud/project/QGT-Columbia-HKI-repo/&quot;
@@ -64,32 +85,55 @@ DATA=glue::glue(&quot;{PRE}/data&quot;)
 RESULTS=glue::glue(&quot;{PRE}/results&quot;)
 METAXCAN=glue::glue(&quot;{PRE}/repos/MetaXcan-master/software&quot;)
 FASTENLOC=glue::glue(&quot;{PRE}/repos/fastenloc-master&quot;)
-TORUS=glue::glue(&quot;{PRE}/repos/torus-master&quot;)
-TWMR=glue::glue(&quot;{PRE}/repos/TWMR-master&quot;)</code></pre>
-<pre class="r"><code># This is a reference table we&#39;ll use a lot throughout the lab. It contains information about the genes.
+
+# This is a reference table we&#39;ll use a lot throughout the lab. It contains information about the genes.
 gencode_df = load_gencode_df()</code></pre>
-<pre class="bash"><code>## here we define names of directories in bash
-export PRE=&quot;/cloud/project/QGT-Columbia-HKI-repo/box_files&quot;
+<ul class="task-list">
+<li><input type="checkbox" disabled="" />
+check the values of the variables you just defined in R</li>
+</ul>
+<pre class="r"><code>MODEL
+
+DATA</code></pre>
+<ul class="task-list">
+<li><input type="checkbox" disabled="" />
+define some variables to access the data more easily in the terminal. Remember we are running R code in the R console and command line code in the terminal.</li>
+</ul>
+<pre class="bash"><code>export PRE=&quot;/cloud/project/QGT-Columbia-HKI-repo/box_files&quot;
 export LAB=&quot;/cloud/project/QGT-Columbia-HKI-repo/&quot;
 export CODE=$LAB/code
 export DATA=$PRE/data
 export MODEL=$PRE/models
 export RESULTS=$PRE/results
-export METAXCAN=$PRE/repos/MetaXcan-master/software
-export TWMR=$PRE/repos/TWMR-master</code></pre>
+export METAXCAN=$PRE/repos/MetaXcan-master/software</code></pre>
+<ul class="task-list">
+<li><input type="checkbox" disabled="" />
+check the values of the variables you just defined</li>
+</ul>
+<pre class="bash"><code>
+echo $CODE
+echo $RESULTS
+</code></pre>
 </div>
-<div id="transcriptome-wide-association-methods" class="section level1">
-<h1>Transcriptome-wide Association Methods</h1>
-<p>Now we will perform a transcriptome-wide association analysis using the PrediXcan, also known as TWAS, suite of tools. We start by predicting the expression levels of genes using the genotype data and the prediction weights. Then we perform an association between the predicted expression and the phenotype</p>
-<div id="predicting-expression-using-metaxcan" class="section level2">
-<h2>Predicting Expression Using METAXCAN</h2>
+<div id="questionnaire-01" class="section level1">
+<h1>Questionnaire 01</h1>
+<p><a href="https://forms.gle/FDwPcjLFynqQP7Fd8">Fill out this form</a></p>
+</div>
+<div id="transcriptome-wide-association-review" class="section level1">
+<h1>Transcriptome-wide association (Review)</h1>
+<p>Now we will perform a transcriptome-wide association analysis using the PrediXcan suite of tools.
+<img src="https://raw.githubusercontent.com/hakyimlab/QGT-Columbia-HKI/master/extras/figures/Association-Methods.png" alt="Transcriptome-wide association methods" /></p>
+<p>We start by predicting the expression levels of genes using the genotype data and the prediction weights and then perform an association between the predicted expression and the phenotype (denoted trait in the figure below).</p>
+<p><img src="https://raw.githubusercontent.com/hakyimlab/QGT-Columbia-HKI/master/extras/figures/PrediXcan-run.png" /></p>
+</div>
+<div id="predict-expression-from-genotype" class="section level1">
+<h1>Predict Expression from genotype</h1>
 <p>In this section we will predict expression of genes in whole blood using the Predict.py code in the METAXCAN folder.</p>
-<p><a href="https://raw.githubusercontent.com/hakyimlab/QGT-Columbia-HKI/master/extras/figures/PrediXcan-run.png" class="uri">https://raw.githubusercontent.com/hakyimlab/QGT-Columbia-HKI/master/extras/figures/PrediXcan-run.png</a></p>
-<div id="tips" class="section level3">
-<h3>Tips:</h3>
 <ul>
-<li>Remember you need to copy and paste this code chunk into the terminal to run it. Also make sure you activated the imlabtools environment which has all the necessary python modules.</li>
-<li>Make sure all the paths and file names are correct</li>
+<li><p>Prediction models (weights) are located in the MODEL folder. Additional models for different tissues and transcriptome studies can be downloaded from <a href="http://predictdb.org">predictdb.org</a>.</p></li>
+<li><p>This run should take about one minute.</p></li>
+<li><p><input type="checkbox" disabled="" />
+run the following code in the terminal.</p></li>
 </ul>
 <pre class="bash"><code>printf &quot;Predict expression\n\n&quot;
 python3 $METAXCAN/Predict.py \
@@ -102,16 +146,20 @@ python3 $METAXCAN/Predict.py \
 --prediction_summary_output $RESULTS/predixcan/Whole_Blood__summary.txt \
 --verbosity 9 \
 --throw</code></pre>
-<ul>
-<li>run following code in the console to get information on reported prediction performance</li>
+<blockquote>
+<p>Note we are only predicting chromosome 22 here (check by running “predicted_expression %&gt;% count(chromosome)” in the console)</p>
+</blockquote>
+<ul class="task-list">
+<li><input type="checkbox" disabled="" />
+run following code in the console to get information on reported prediction performance.</li>
 </ul>
+<blockquote>
+<p>Find additional information <a href="https://github.com/hakyimlab/MetaXcan/wiki/Individual-level-PrediXcan:-introduction,-tutorials-and-manual">in this wiki</a></p>
+</blockquote>
 <pre class="r"><code>prediction_fp = glue::glue(&quot;{RESULTS}/predixcan/Whole_Blood__predict.txt&quot;)
 
 ## Read the Predict.py output into a dataframe. This function reorganizes the data and adds gene names.
 predicted_expression = load_predicted_expression(prediction_fp, gencode_df)
-
-## (optional) take a look at what load_predicted_expression does by typing the load_predicted_expression (without the parenthesis)
-## it reformats the matrix into a long format, more convenient for comparison with observed expression
 
 head(predicted_expression)
 
@@ -121,25 +169,31 @@ prediction_summary = load_prediction_summary(glue::glue(&quot;{RESULTS}/predixca
 dim(prediction_summary)
 head(prediction_summary)
 
+## how many unique genes were predicted?
+predicted_expression %&gt;% .[[&quot;gene_id&quot;]] %&gt;% unique() %&gt;% length()
+
+## gene expression were predicted for how many people?
+predicted_expression %&gt;% .[[&quot;IID&quot;]] %&gt;% unique() %&gt;% length()
+
 print(&quot;distribution of prediction performance r2&quot;)
-summary(prediction_summary$pred_perf_r2)</code></pre>
-</div>
-</div>
+summary(prediction_summary$pred_perf_r2)
+hist(prediction_summary$pred_perf_r2)
+## Note: this is what the prediction trainer reported as prediction performance</code></pre>
 <div id="optional-assess-actual-prediction-performance" class="section level2">
 <h2>(Optional) Assess Actual Prediction Performance</h2>
-<p>Note: <em>Genes ERAP1 (ENSG00000164307) PEX6 (ENSG00000124587) are not present in predicted expression because the genes for perdicted expression are based soley in CHR22 </em></p>
 <pre class="r"><code>## download and read observed expression data from GEUVADIS 
 ## from https://uchicago.box.com/s/4y7xle5l0pnq9d1fwmthe2ewhogrnlrv
 
-obs_exp&lt;- read_csv(&quot;Optional/GEUVADIS.observed_df.csv&quot;)
+obs_exp&lt;- read_csv(glue::glue(&quot;{DATA}/predixcan/GEUVADIS.observed_df.csv.gz&quot;))
 
-## TODO: delete this note ## Remove the version number from the gene_id&#39;s (ENSG000XXX.ver) ???
+## Note that the version of the ensemble id of the gene was removed
 head(predicted_expression)
 
 ## Q: how many genes were predicted?
 length(unique(predicted_expression$gene_id))
 
-## merge predicted expression with observed expression data (by IID and gene)
+## inner join predicted expression with observed expression data (by IID and gene)
+## common errors occur when ensemble id&#39;s have versions in one set and not the other set
 fullset=inner_join(predicted_expression, obs_exp, by = c(&quot;gene_id&quot;,&quot;IID&quot;))
 
 ## calculate spearman correlation for all genes
@@ -151,6 +205,8 @@ for(gg in 1:length(genelist))
   ind = fullset$gene_id==genelist[gg]
   corvec[gg] = cor(fullset$predicted_expression[ind], fullset$observed_expression[ind])
 }
+
+## what&#39;s the best performing gene?
 
 ## plot the histogram of the prediction performance
 hist(corvec)
@@ -177,9 +233,16 @@ geneid = &quot;ENSG00000184164&quot;
 genename = gencode_df %&gt;% filter(gene_id==geneid) %&gt;% .[[&quot;gene_name&quot;]]
 fullset %&gt;% filter(gene_id==geneid) %&gt;% ggplot(aes(observed_expression, predicted_expression))+geom_point()+ggtitle(paste(genename, &quot;-&quot;, geneid))</code></pre>
 </div>
-<div id="run-association-with-a-simulated-phenotype" class="section level2">
-<h2>Run Association with a Simulated Phenotype</h2>
-<p>Edit Note: Add mathematical formula</p>
+</div>
+<div id="questionnaire-02" class="section level1">
+<h1>Questionnaire 02</h1>
+<p>Prediction <a href="https://forms.gle/CZYGyNdfNVH2W9QF7">Fill out this form</a></p>
+</div>
+<div id="run-predixcan-association" class="section level1">
+<h1>Run PrediXcan association</h1>
+<p>We are going to use a simulated phenotype for which only UPK3A has an effect on the phenotype (<span class="math inline">\(\beta=-0.9887378\)</span>)</p>
+<p><span class="math inline">\(Y = \sum_k T_k \beta_k + \epsilon\)</span></p>
+<p>with random effects <span class="math inline">\(\beta_k \sim (1-\pi)\cdot \delta_0 + \pi\cdot N(0,1)\)</span></p>
 <pre class="bash"><code>
 export PHENO=&quot;sim.spike_n_slab_0.01_pve0.1&quot;
 
@@ -192,10 +255,7 @@ python3 $METAXCAN/PrediXcanAssociation.py \
 --verbosity 9 \
 --throw
 </code></pre>
-<p>More predicted phenotypes can be found in $DATA/predixcan/phenotype/. The naming of the phenotypes provides information about the genetic architecture: the number after pve is the proportion of variance of Y explained by the genetic component of expression. The number after spike_n_slab represents the probability that a gene is causal π
-(i.e. prob β≠0
-)</p>
-</div>
+<p>More predicted phenotypes can be found in $DATA/predixcan/phenotype/. The naming of the phenotypes provides information about the genetic architecture: the number after pve is the proportion of variance of Y explained by the genetic component of expression. The number after spike_n_slab represents the probability that a gene is causal π (i.e. prob β≠0)</p>
 <div id="looking-at-association-results" class="section level2">
 <h2>Looking at Association Results</h2>
 <pre class="r"><code>## read association results
@@ -205,8 +265,8 @@ predixcan_association = load_predixcan_association(glue::glue(&quot;{RESULTS}/pr
 
 ## take a look at the results
 dim(predixcan_association)
-predixcan_association %&gt;% arrange(pvalue) %&gt;% head
-predixcan_association %&gt;% arrange(pvalue) %&gt;% ggplot(aes(pvalue)) + geom_histogram(bins=20)
+predixcan_association %&gt;% arrange(pvalue) %&gt;% select(gene_name,effect,se,pvalue,gene) %&gt;% head
+predixcan_association %&gt;% arrange(pvalue) %&gt;% ggplot(aes(pvalue)) + geom_histogram(bins=10)
 ## compare distribution against the null (uniform)
 gg_qqplot(predixcan_association$pvalue, max_yval = 40)</code></pre>
 </div>
@@ -221,54 +281,75 @@ betas = (predixcan_association %&gt;%
                         &#39;gene_id&#39;=&#39;gene&#39;, 
                         &#39;gene_name&#39;=&#39;gene_name.x&#39;, 
                         &#39;region_id&#39;=&#39;region_id.x&#39;)))
-betas %&gt;% arrange(pvalue) %&gt;% head
+betas %&gt;% arrange(pvalue) %&gt;% select(gene_name,estimated_beta,true_beta,pvalue) %&gt;% head
 ## do you see examples of potential LD contamination?
-betas %&gt;% ggplot(aes(estimated_beta, true_beta))+geom_point()+geom_abline()</code></pre>
+betas %&gt;% mutate(causal= true_beta!=0) %&gt;% ggplot(aes(estimated_beta, true_beta,col=causal))+geom_point(alpha=0.6,size=5)+geom_abline()+theme_bw()</code></pre>
+<blockquote>
+<p>UPK3A is the causal gene and has the most significant pvalue. RIBC2 is also significantly associated but has no causal role (we know because we simulated the phenotype that way). Why?</p>
+</blockquote>
+<p>Hint: correlation between the genes</p>
 </div>
 </div>
-<div id="summary-predixcan" class="section level1">
-<h1>Summary PrediXcan</h1>
+<div id="questionnaire-03" class="section level1">
+<h1>Questionnaire 03</h1>
+<p>PrediXcan Association [Fill out this form] (<a href="https://forms.gle/Z8YdYjgYs2zQY5cP6" class="uri">https://forms.gle/Z8YdYjgYs2zQY5cP6</a>)</p>
+</div>
+<div id="run-summary-predixcan" class="section level1">
+<h1>Run Summary PrediXcan</h1>
 <p>Now we will use the summary results from a GWAS of coronary artery disease to calculate the association between the genetic component of the expression of genes and coronary artery disease risk. We will use the SPrediXcan.py.</p>
-<p>The GWAS results (harmonized and imputed) for coronary artery disease are available in $PRE/spredixcan/data/</p>
-<div id="running-s-predixcan" class="section level2">
-<h2>Running S-PrediXcan</h2>
+<p><img src="https://uchicago.box.com/shared/static/m45nnkeskzh88ifnv8td5e3fntdfzhjs.png" /></p>
+<p>The GWAS results (harmonized and imputed) for coronary artery disease are available in $PRE/spredixcan/data/
+## Running S-PrediXcan</p>
 <pre class="bash"><code>
 python $METAXCAN/SPrediXcan.py \
 --gwas_file  $DATA/spredixcan/imputed_CARDIoGRAM_C4D_CAD_ADDITIVE.txt.gz \
---snp_column panel_variant_id --effect_allele_column effect_allele --non_effect_allele_column non_effect_allele --zscore_column zscore \
+--snp_column panel_variant_id \
+--effect_allele_column effect_allele \
+--non_effect_allele_column non_effect_allele \
+--zscore_column zscore \
 --model_db_path $MODEL/gtex_v8_mashr/mashr_Whole_Blood.db \
 --covariance $MODEL/gtex_v8_mashr/mashr_Whole_Blood.txt.gz \
---keep_non_rsid --additional_output --model_db_snp_key varID \
+--keep_non_rsid \
+--additional_output \
+--model_db_snp_key varID \
 --throw \
 --output_file $RESULTS/spredixcan/eqtl/CARDIoGRAM_C4D_CAD_ADDITIVE__PM__Whole_Blood.csv
 </code></pre>
-</div>
+<blockquote>
+<p>We can run the full genome because the summary statistics based PrediXcan is much faster than individual level one.</p>
+</blockquote>
 <div id="plot-and-interpret-results" class="section level2">
 <h2>Plot and Interpret Results</h2>
-<pre class="r"><code>#Sort1 or ENSG00000134243 is still not present
-spredixcan_association = load_spredixcan_association(glue::glue(&quot;{RESULTS}/spredixcan/eqtl/CARDIoGRAM_C4D_CAD_ADDITIVE__PM__Whole_Blood.csv&quot;), gencode_df)
+<pre class="r"><code>spredixcan_association = load_spredixcan_association(glue::glue(&quot;{RESULTS}/spredixcan/eqtl/CARDIoGRAM_C4D_CAD_ADDITIVE__PM__Whole_Blood.csv&quot;), gencode_df)
 dim(spredixcan_association)
 spredixcan_association %&gt;% arrange(pvalue) %&gt;% head
 spredixcan_association %&gt;% arrange(pvalue) %&gt;% ggplot(aes(pvalue)) + geom_histogram(bins=20)
 
-gg_qqplot(spredixcan_association$pvalue)
-filter(spredixcan_association, gene_name==&quot;AHSG&quot;)</code></pre>
+gg_qqplot(spredixcan_association$pvalue)</code></pre>
 <ul>
-<li><em>Question:</em> SORT1, considered to be a causal gene for LDL cholesterol and as a consequence of coronary artery disease, is not found here. Why?</li>
-<li>Hint: Tissue</li>
+<li><p><em>Question:</em> SORT1, considered to be a causal gene for LDL cholesterol and as a consequence of coronary artery disease, is not found here. Why?</p></li>
+<li><p><input type="checkbox" disabled="" />
+check whether SORT1 is expressed in whole blood <a href="https://gtexportal.org/home/gene/SORT1">GTEx portal</a></p></li>
+<li><p><input type="checkbox" disabled="" />
+check whether SORT1 has eQTL in whole blood <a href="https://gtexportal.org/home/gene/SORT1">GTEx portal</a></p></li>
 </ul>
 </div>
-<div id="excerise" class="section level2">
-<h2>Excerise</h2>
-<p>-[]Run s-predixcan with liver model, do you find SORT1? Is it significant?</p>
+<div id="run-s-predixcan-using-gene-expression-predicted-in-liver" class="section level2">
+<h2>Run S-PrediXcan using gene expression predicted in liver</h2>
+<p>-[] Run s-predixcan with liver model, do you find SORT1? Is it significant?</p>
 <pre class="bash"><code>#loction Liver models 
 #/cloud/project/QGT-Columbia-HKI-repo/box_files/models/gtex_v8_mashr/
 python $METAXCAN/SPrediXcan.py \
 --gwas_file  $DATA/spredixcan/imputed_CARDIoGRAM_C4D_CAD_ADDITIVE.txt.gz \
---snp_column panel_variant_id --effect_allele_column effect_allele --non_effect_allele_column non_effect_allele --zscore_column zscore \
+--snp_column panel_variant_id \
+--effect_allele_column effect_allele \
+--non_effect_allele_column non_effect_allele \
+--zscore_column zscore \
 --model_db_path $MODEL/gtex_v8_mashr/mashr_Liver.db \
 --covariance $MODEL/gtex_v8_mashr/mashr_Liver.txt.gz \
---keep_non_rsid --additional_output --model_db_snp_key varID \
+--keep_non_rsid \
+--additional_output \
+--model_db_snp_key varID \
 --throw \
 --output_file $RESULTS/spredixcan/eqtl/CARDIoGRAM_C4D_CAD_ADDITIVE__PM__Liver.csv</code></pre>
 <pre class="r"><code>spredixcan_association_L= load_spredixcan_association(glue::glue(&quot;{RESULTS}/spredixcan/eqtl/CARDIoGRAM_C4D_CAD_ADDITIVE__PM__Liver.csv&quot;), gencode_df)
@@ -277,17 +358,33 @@ spredixcan_association_L %&gt;% arrange(pvalue) %&gt;% head
 spredixcan_association_L %&gt;% arrange(pvalue) %&gt;% ggplot(aes(pvalue)) + geom_histogram(bins=20)
 
 gg_qqplot(spredixcan_association_L$pvalue)
+col_order= c(&quot;gene_name&quot;,&quot;gene&quot;,&quot;zscore&quot;,&quot;effect_size&quot;,&quot;pvalue&quot;,&quot;var_g&quot;,&quot;pred_perf_r2&quot;, &quot;pred_perf_pval&quot;,&quot;pred_perf_qval&quot;, &quot;n_snps_used&quot;, &quot;n_snps_in_cov&quot;, &quot;n_snps_in_model&quot;,&quot;best_gwas_p&quot;,&quot;largest_weight&quot;)
+spredixcan_association_L &lt;- spredixcan_association_L[, col_order]
 filter(spredixcan_association_L, gene_name==&quot;SORT1&quot;)</code></pre>
-<p>-[]Compare zscores in liver and whole blood.</p>
+</div>
+<div id="optional-compare-zscores-in-liver-and-whole-blood." class="section level2">
+<h2>(Optional) Compare zscores in liver and whole blood.</h2>
+<blockquote>
+<p>Recall that zscore is the effect size divided by the standard error</p>
+</blockquote>
 <pre class="r"><code>spredixcan_association_L=rename(spredixcan_association_L, zscore_liver = &quot;zscore&quot;)
 head(spredixcan_association_L)
 test=left_join(spredixcan_association, spredixcan_association_L, by=&quot;gene_name&quot;)
 test=select(test,&quot;gene_name&quot;,&quot;zscore&quot;,&quot;zscore_liver&quot;)
-test %&gt;% arrange(zscore_liver) %&gt;% head</code></pre>
+test %&gt;% arrange(zscore_liver) %&gt;% head
+
+test %&gt;% mutate(zscore_WB=zscore) %&gt;% ggplot(aes(zscore_WB,zscore_liver)) + geom_point(size=3,alpha=.6) + geom_abline()
+
+## S-PrediXcan association in liver and whole blood are significantly correlated
+cor.test(test$zscore,test$zscore_liver)</code></pre>
 </div>
 <div id="optional-run-multixcan" class="section level2">
 <h2>(Optional) Run MultiXcan</h2>
-<p>Multixcan aggregates information across multiple tissues to boost the power to detect association. It was developed motivated by the fact that eQTLs are shared across multiple tissues, i.e. many genetic variants that regulate expression are common across tissues. *</p>
+<ul>
+<li><p>multixcan aggregates information across multiple tissues to boost the power to detect association. It was developed movivated by the fact that eQTLs are shared across multiple tissues, i.e. many genetic variants that regulate expression are common across tissues.</p></li>
+<li><p>before you run multixcan ensure you have run s-predixcan for all the tissues you want to multixcan. In this tutorial we have two tissues (liver and whole blood), ensure you have run s-predixcan with the two tissues before running multixcan.</p></li>
+<li><p>One thing to note is to ensure similar naming pattern for the output files. This is to ensure the files are captured correctly when running multixcan’s filter.</p></li>
+</ul>
 <pre class="bash"><code>
 python $METAXCAN/SMulTiXcan.py \
 --models_folder $MODEL/gtex_v8_mashr \
@@ -303,83 +400,304 @@ python $METAXCAN/SMulTiXcan.py \
 --throw \
 --output $RESULTS/smultixcan/eqtl/CARDIoGRAM_C4D_CAD_ADDITIVE_smultixcan.txt
 </code></pre>
-<p>verbosity 9 will output fewer lines during computation</p>
+</div>
+<div id="questionnaire-04" class="section level2">
+<h2>Questionnaire 04</h2>
+<p>04 S-PrediXcan <a href="https://forms.gle/VVMYsP7u5Fh18fSY7">Fill out this form</a></p>
 </div>
 </div>
-<div id="colocalization-methods" class="section level1">
-<h1>Colocalization Methods</h1>
-<p>Colocalization methods seek to estimate the probability that the complex trait and expression causal variants are the same. We favor methods that calculate the probability of causality for each trait (posterior inclusion probability), called fine-mapping methods. Here we use torus for fine-mapping and fastENLOC for colocalization.</p>
-<div id="gwas-summary-statistics-to-torus-format" class="section level2">
-<h2>GWAS Summary Statistics to Torus Format</h2>
-<p>We ran code in our setup to format GWAS summary statistics into a format that the fine-mapping method torus can understand. If you are curious you can find the code in the Lab_setup.Rmd.</p>
+<div id="colocalization-methods-review" class="section level1">
+<h1>Colocalization Methods (Review)</h1>
+<p>Colocalization methods seek to estimate the probability that the complex trait and expression causal variants are the same. We favor methods that calculate the probability of causality for each trait (posterior inclusion probability), called fine-mapping methods. Here we use susie for fine-mapping and coloc for colocalization.</p>
+<p><img src="https://raw.githubusercontent.com/hakyimlab/QGT-Columbia-HKI/master/extras/figures/colocalization-run.png" /></p>
 </div>
-<div id="fine-map-gwas-results" class="section level2">
-<h2>Fine-Map GWAS Results</h2>
-<ul>
-<li><p>We run torus due to time limitation but ideally we would like to run a method that allows multiple causal variants per locus, such as DAP-G or SusieR.</p></li>
-<li><p>Torus has been precompiled and placed within the PATH</p></li>
-</ul>
-<pre class="bash"><code>export TORUSOFT=/cloud/project/QGT-Columbia-HKI-repo/box_files/repos/torus-master/src/torus.static
+<div id="run-colocalization" class="section level1">
+<h1>Run colocalization</h1>
+<p>When you use coloc on your own data, you may want to check out coloc’s documentation, with good advice and tips on avoiding common mistakes <a href="https://cran.r-project.org/web/packages/coloc/vignettes" class="uri">https://cran.r-project.org/web/packages/coloc/vignettes</a></p>
+<p>Due to time constraints, we will run one region and one gene only</p>
+<ol style="list-style-type: decimal">
+<li>Finemap GWAS of CAD</li>
+<li>Finemap eQTL of SORT1</li>
+</ol>
+<p>For finemapping, we need the summary statistics (effect size, standard errors, etc) and the correlation between SNPs (LD matrix)</p>
+<div id="load-the-genotype-to-calculate-the-ld-matrix" class="section level2">
+<h2>load the genotype to calculate the ld matrix</h2>
+<pre class="r"><code># load the genotype to calculate the ld matrix
+X_mat &lt;- BEDMatrix(glue::glue(&quot;{DATA}/colocalization/geuvadis_chr1&quot;))
+colnames(X_mat) &lt;- gsub(&quot;\\_.*&quot;, &quot;&quot;,colnames(X_mat))
+colnames(X_mat) &lt;- str_replace_all(colnames(X_mat),&quot;:&quot;,&quot;_&quot;)
+snp_info &lt;- fread(glue::glue(&quot;{DATA}/colocalization/geuvadis_chr1.bim&quot;)) %&gt;% 
+  setnames(., colnames(.), c(&quot;chr&quot;, &quot;snp&quot;, &quot;cm&quot;, &quot;pos&quot;, &quot;alt&quot;, &quot;ref&quot;)) 
 
-$TORUSOFT -d $PRE/data/fastenloc/CARDIoGRAM_C4D_CAD_ADDITIVE.zval.gz --load_zval -dump_pip $PRE/data/fastenloc/CARDIoGRAM_C4D_CAD_ADDITIVE.gwas.pip
-cd $PRE/data/fastenloc
-gzip CARDIoGRAM_C4D_CAD_ADDITIVE.gwas.pip
-cd $PRE
-</code></pre>
-<p>We can take a quick look at the z-values and fine-mapping PIPs (posterior probability of causality):</p>
-<pre class="bash"><code>cd $PRE/data/fastenloc
-zless CARDIoGRAM_C4D_CAD_ADDITIVE.zval.gz
-zless CARDIoGRAM_C4D_CAD_ADDITIVE.gwas.pip.gz</code></pre>
+snp_info$snp &lt;- str_replace_all(snp_info$snp,&quot;:&quot;,&quot;_&quot;)</code></pre>
 </div>
-<div id="calculate-colocalization-with-fastenloc" class="section level2">
-<h2>Calculate Colocalization with fastENLOC</h2>
-<pre class="bash"><code> * 
-## you can take a look at the tutorial https://github.com/xqwen/fastenloc/tree/master/tutorial
+<div id="load-the-eqtl-and-gwas-effect-size-files" class="section level2">
+<h2>Load the eqtl and gwas effect size files</h2>
+<pre class="r"><code># load the eqtl effect sizes
+gene_ss &lt;- fread(glue::glue(&quot;{DATA}/colocalization/Liver_chr1.txt&quot;))
 
-export eqtl_annotation_gzipped=$PRE/data/fastenloc/FASTENLOC-gtex_v8.eqtl_annot.vcf.gz
-export gwas_data_gzipped=$PRE/data/fastenloc/CARDIoGRAM_C4D_CAD_ADDITIVE.gwas.pip.gz
-export TISSUE=Whole_Blood
-export FASTENLOCSOFT=/cloud/project/QGT-Columbia-HKI-repo/box_files/repos/fastenloc-master/src/fastenloc
-##export FASTENLOCSOFT=fastenloc
-##export FASTENLOCSOFT=/Users/owenmelia/projects/finemapping_bin/src/fastenloc/src/fastenloc
+# load gwas effect sizes
+gwas &lt;- data.table::fread(glue::glue(&quot;{DATA}/spredixcan/imputed_CARDIoGRAM_C4D_CAD_ADDITIVE.txt.gz&quot;))
 
-mkdir $RESULTS/fastenloc/
-cd $RESULTS/fastenloc/
-$FASTENLOCSOFT -eqtl $eqtl_annotation_gzipped -gwas $gwas_data_gzipped -t $TISSUE 
+# filter to select genome wide significant snps at 5 × 10−8
+filtered_regions &lt;- gwas %&gt;% dplyr::filter(pvalue &lt; 5e-8)
 
-#[-total_variants total_snp] [-thread n] [-prefix prefix_name] [-s shrinkage]
-</code></pre>
+# load the ld block
+ldblocks &lt;-read_tsv(glue::glue(&quot;{DATA}/spredixcan/eur_ld.hg38.txt.gz&quot;))</code></pre>
 </div>
-<div id="analyze-results" class="section level2">
-<h2>Analyze Results</h2>
-<pre class="r"><code>## optional - compare with s-predixcan results
+<div id="find-regions-with-the-strongest-signal-in-the-gwas" class="section level2">
+<h2>Find regions with the strongest signal in the gwas</h2>
+<pre class="r"><code># get the loci where the significant snps are located
+for (n in 1:nrow(filtered_regions)){
+  # extract genename, start and end
+  variant_id &lt;- as.character(filtered_regions[n,&quot;variant_id&quot;])
+  variant_chr &lt;- as.character(filtered_regions[n,&quot;chromosome&quot;])
+  variant_pos &lt;- as.numeric(filtered_regions[n,&quot;position&quot;])
+  #gene_end &lt;- as.numeric(genes[n,&quot;end&quot;])
 
-fastenloc_results = load_fastenloc_coloc_result(glue::glue(&quot;{RESULTS}/fastenloc/enloc.sig.out&quot;))
-spredixcan_and_fastenloc = inner_join(spredixcan_association, fastenloc_results, by=c(&#39;gene&#39;=&#39;Signal&#39;))
-ggplot(spredixcan_and_fastenloc, aes(RCP, -log10(pvalue))) + geom_point()
+  locus &lt;- ldblocks %&gt;%
+    dplyr::filter(chr == variant_chr) %&gt;%
+    filter(variant_pos &gt;= start &amp; variant_pos &lt; stop) %&gt;%
+    mutate(locus_name = paste0(chr,&quot;_&quot;,start,&quot;_&quot;,stop)) %&gt;%
+    dplyr::rename(locus_start=start,locus_end=stop) %&gt;%
+    mutate(variant_id = variant_id, position=variant_pos)
 
-## which genes are both colocalized (rcp&gt;0.10) and significantly associated (pvalue&lt;0.05/number of tests)</code></pre>
+  # create a data frame with info
+  if (exists(&#39;all_loci&#39;) &amp;&amp; is.data.frame(get(&#39;all_loci&#39;))) {
+    all_loci &lt;- rbind(all_loci,locus)
+  } else {
+    all_loci &lt;- locus
+  }
+}
+
+# select uniq loci
+d_loci &lt;- all_loci %&gt;%
+  dplyr::select(locus_name,chr,locus_start,locus_end) %&gt;%
+  dplyr::distinct()</code></pre>
 </div>
+<div id="select-a-region-to-run-coloc" class="section level2">
+<h2>select a region to run coloc</h2>
+<pre class="r"><code># select regions to fine map. we are going to use regions in chromosome 1
+uniq_loci &lt;- d_loci %&gt;% dplyr::filter(&quot;chr1&quot; == chr)
+n = 3 # chr1_107867043_109761309 region
+
+# extract information
+l_chr = as.numeric(str_remove(uniq_loci[n,&quot;chr&quot;],&quot;chr&quot;))
+s_chr = uniq_loci[n,]$chr
+l_start = uniq_loci[n,]$locus_start
+l_stop = uniq_loci[n,]$locus_end
+l_name = uniq_loci[n,]$locus_name</code></pre>
+</div>
+<div id="prepare-gwas-data-for-coloc" class="section level2">
+<h2>Prepare gwas data for coloc</h2>
+<pre class="r"><code># select snps for the region from the summary stats
+ss &lt;- gwas %&gt;% 
+  dplyr::filter(chromosome == s_chr) %&gt;%
+  dplyr::filter(position &gt;= l_start &amp; position &lt;= l_stop) %&gt;% 
+  dplyr::filter(! is.na(effect_size))
+
+# find the snps in the genotype to calculate the correlation
+g.snps &lt;- ss %&gt;% inner_join(snp_info %&gt;% mutate(chr = glue::glue(&quot;chr{chr}&quot;)), 
+                            by=c(&quot;chromosome&quot; = &quot;chr&quot;,&quot;panel_variant_id&quot; = &quot;snp&quot;))
+
+
+# select genotype to calculate correlation
+#f_mat &lt;- X_mat[,g.snps$snp]
+f_mat &lt;- X_mat[,g.snps$panel_variant_id]
+
+# calculate corr
+R = cora(f_mat) # the package is for speed
+
+## clean up
+rm(f_mat)
+
+ff &lt;- g.snps %&gt;% dplyr::filter(! is.na(effect_size)) %&gt;% #select(-snp) %&gt;% 
+  dplyr::rename(snp=panel_variant_id,beta=effect_size) %&gt;% 
+  mutate(varbeta = standard_error^2) %&gt;% 
+  dplyr::select(beta,varbeta,snp,position) %&gt;% as.list()
+
+ff$type &lt;- &quot;cc&quot;
+ff$sdY &lt;- 1
+
+ff$LD = R
+ff$N = 184305
+
+## check the data (NULL means it&#39;s fine)
+check_dataset(ff)</code></pre>
+</div>
+<div id="prepare-eqtl-data-for-coloc" class="section level2">
+<h2>Prepare eqtl data for coloc</h2>
+<pre class="r"><code>#Using SORT1 gene and liver tissue
+gene &lt;- gene_ss %&gt;% dplyr::filter(gene_id == &quot;ENSG00000134243.11&quot;) %&gt;% 
+  dplyr::rename(snp = variant_id,beta = slope, MAF = maf,
+                pvalue = pval_nominal) %&gt;% 
+  mutate(varbeta = slope_se^2, name = snp) %&gt;% 
+  filter(! is.na(varbeta)) %&gt;% 
+  separate(name, into = c(&quot;chr&quot;, &quot;position&quot;,&quot;ref&quot;,&quot;alt&quot;,&quot;build&quot;),sep = &quot;_&quot;)
+
+## calculate the ld matrix
+### get the snps
+gene.snps &lt;- gene %&gt;% mutate(position = as.integer(position)) %&gt;% 
+  inner_join(snp_info %&gt;% mutate(chr = glue::glue(&quot;chr{chr}&quot;)), 
+                              by=c(&quot;chr&quot; = &quot;chr&quot;,&quot;snp&quot; = &quot;snp&quot;))
+
+# select genotype to calculate correlation
+g_mat &lt;- X_mat[,gene.snps$snp]
+# calculate corr
+g.R = cora(g_mat)
+
+# clean up
+rm(g_mat)
+
+# format data for coloc
+gg &lt;- gene %&gt;% dplyr::filter(snp %in% gene.snps$snp) %&gt;%
+  mutate(position = as.integer(position)) %&gt;% 
+  dplyr::select(beta,varbeta,snp,position,MAF, pvalue) %&gt;% as.list()
+
+gg$type &lt;- &quot;quant&quot;
+gg$LD = g.R
+gg$N = 208 # 670 for blood
+
+## check the data
+check_dataset(gg)</code></pre>
+</div>
+<div id="run-older-version-of-coloc-which-assumes-single-causal-variant" class="section level2">
+<h2>run older version of coloc which assumes single causal variant</h2>
+<p><em>coloc.abf</em> makes the simplifying assumption that each trait has at most one causal variant in the region under consideration</p>
+<pre class="r"><code>my.res &lt;- coloc.abf(dataset1=ff, dataset2=gg)
+sensitivity(my.res,&quot;H4 &gt; 0.9&quot;)</code></pre>
+</div>
+<div id="run-coloc-allowing-multiple-causal-variants" class="section level2">
+<h2>run coloc allowing multiple causal variants</h2>
+<p>Multiple causal variants, using SuSiE to separate the signals</p>
+<pre class="r"><code># Run susie fine maooing
+S3 = runsusie(ff)
+S4 = runsusie(gg)
+#summary(S3)
+
+# Run coloc
+susie.res=coloc.susie(S3,S4)
+print(susie.res$summary)</code></pre>
+<p>SuSiE can take a while to run on larger datasets, so it is best to run once per dataset with the =runsusie= function, store the results and feed those into subsequent analyses.</p>
+<p>plot the coloc result with the sensitivity function because weird effects are much easier to understand visually</p>
+<pre class="r"><code>sensitivity(susie.res,&quot;H4 &gt; 0.9&quot;,row=1,dataset1=ff,dataset2=gg,)</code></pre>
+</div>
+</div>
+<div id="questionnaire-05-todo-change-the-questionnaire" class="section level1">
+<h1>Questionnaire 05 TODO: change the questionnaire</h1>
+<p>Colocalization <a href="https://forms.gle/8fiYqfiqv31XHsUz9">Fill out this form</a></p>
+<hr />
 </div>
 <div id="mendelian-randomization-methods" class="section level1">
 <h1>Mendelian Randomization Methods</h1>
-<div id="run-twmr-for-a-locus" class="section level2">
-<h2>run TWMR (for a locus)</h2>
-<pre class="r"><code># Load the &#39;analyseMR&#39; function
-source(glue::glue(&quot;{CODE}/TWMR_script.R&quot;))
-
-# Collect the list of genes available to run
-gene_lst &lt;- list.files(TWMR)
-gene_lst &lt;- gene_lst[str_detect(gene_lst, &quot;ENS.*&quot;)]
-gene_lst &lt;- (gsub(&quot;\\..*&quot;, &quot;&quot;, gene_lst) %&gt;% unique)
-
-# Set the gene and run. The function writes output to a file.
-for (gene in gene_lst) {
-  analyseMR(gene, TWMR)
-}
-
-twmr_results &lt;- load_twmr_results(TWMR, gencode_df)
-
-twmr_results %&gt;% select(gene_name,region_id, Nsnps,Ngene,P) </code></pre>
+<div id="twmr-for-a-locus" class="section level2">
+<h2>TWMR (for a locus)</h2>
+<div class="figure">
+<img src="https://raw.githubusercontent.com/hakyimlab/QGT-Columbia-HKI/master/extras/figures/TWMR.png" alt="" />
+<p class="caption">TWMR</p>
 </div>
+</div>
+</div>
+<div id="ctwas" class="section level1">
+<h1>cTWAS</h1>
+<p>cTWAS stands for causal TWAS and seeks to calculate the posterior inclusion probability of genes and SNPs in a given region to be causal. It’s a modification of SUSIER that adds predicted gene expression levels in addition to SNPs in the analysis. It is not yet published, but the authors (Siming Zhao, Wesley Crouse, Matthew Stephens et al) have shared a vignette with us to try it out.</p>
+<blockquote>
+<p>Thank you, Wes, for creating this portion of the lab!</p>
+</blockquote>
+<pre class="r"><code>#install.packages(&quot;R.utils&quot;)
+
+#install.packages(&quot;remotes&quot;)
+#remotes::install_github(&quot;simingz/ctwas&quot;, ref = &quot;develop&quot;)
+
+library(ctwas)
+
+#get positions for region of interest (SORT1/PSRC1 locus)
+region &lt;- unlist(strsplit(spredixcan_association$region_id[spredixcan_association$gene_name==&quot;PSRC1&quot;], &quot;_&quot;))
+chr &lt;- region[2]
+start &lt;- as.numeric(region[3])
+end &lt;- as.numeric(region[4])
+
+#format summary statistics (and subset to variants in region to save memory)
+z_snp &lt;- data.table::fread(glue::glue(&quot;{DATA}/spredixcan/imputed_CARDIoGRAM_C4D_CAD_ADDITIVE.txt.gz&quot;), select=c(&quot;chromosome&quot;, &quot;position&quot;, &quot;variant_id&quot;, &quot;effect_allele&quot;, &quot;non_effect_allele&quot;, &quot;zscore&quot;, &quot;sample_size&quot;))
+z_snp &lt;- z_snp[z_snp$chromosome==chr &amp; z_snp$position &gt;= start &amp; z_snp$position &lt;= end,]
+z_snp &lt;- z_snp[!is.na(z_snp$variant_id),-(1:2)]
+colnames(z_snp) &lt;- c(&quot;id&quot;, &quot;A1&quot;, &quot;A2&quot;, &quot;z&quot;, &quot;ss&quot;)
+
+#specify directories for LD matrices and weights
+ld_R_dir &lt;- glue::glue(&quot;{DATA}/cTWAS/LD_matrices&quot;)
+weight &lt;-  glue::glue(&quot;{MODEL}/gtex_v8_mashr/mashr_Liver.db&quot;)
+
+#specify output locations and names for cTWAS
+outputdir &lt;- glue::glue(&quot;{DATA}/cTWAS/results/&quot;)
+outname.e &lt;- &quot;CARDIoGRAM_Liver_expr&quot;
+outname &lt;- &quot;CARDIoGRAM_Liver_ctwas&quot;
+
+#impute gene z scores using cTWAS and save the results
+##################################
+# NOTE: we are skipping this step and using the precomputed values 
+## takes ~10 minutes
+##################################
+# ctwas_imputation &lt;- impute_expr_z(z_snp=z_snp, weight=weight, ld_R_dir=ld_R_dir, outputdir=outputdir, outname=outname.e, harmonize_z=F, harmonize_wgt=F)
+# save(ctwas_imputation, file = paste0(outputdir, outname.e, &quot;_output.Rd&quot;))
+load(paste0(outputdir, outname.e, &quot;_output.Rd&quot;))
+
+z_gene &lt;- ctwas_imputation$z_gene
+ld_exprfs &lt;- ctwas_imputation$ld_exprfs
+z_snp &lt;- ctwas_imputation$z_snp
+
+#make custom region file for single region
+ld_regions_custom &lt;- data.frame(&quot;chr&quot; = chr, &quot;start&quot; = start, &quot;stop&quot; = end)
+
+write.table(ld_regions_custom, 
+            file= paste0(outputdir, &quot;ld_regions_custom.txt&quot;),
+            row.names=F, col.names=T, sep=&quot;\t&quot;, quote = F)
+    
+ld_regions_custom &lt;- paste0(outputdir, &quot;ld_regions_custom.txt&quot;)
+
+#run cTWAS with pre-specified prior parameters at a single locus
+#estimating prior requires genome-wide data, too slow for demonstration
+#prior is 1% inclusion for genes and is 100x more likely than SNPs
+#prior assumes genes have larger effect size than SNPs, in reasonable range for data we&#39;ve looked at
+ctwas_rss(z_gene=z_gene, z_snp=z_snp, ld_exprfs=ld_exprfs, ld_R_dir = ld_R_dir, ld_regions_custom=ld_regions_custom, outputdir = outputdir, outname = outname, thin = 0.01,
+          estimate_group_prior = F,
+          estimate_group_prior_var = F,
+          group_prior=c(0.01, 0.0001),
+          group_prior_var=c(50, 25))
+
+#load results
+ctwas_results &lt;- data.table::fread(paste0(outputdir,outname,&quot;.susieIrss.txt&quot;))
+
+#merge gene names into the results
+sqlite &lt;- RSQLite::dbDriver(&quot;SQLite&quot;)
+db = RSQLite::dbConnect(sqlite, weight)
+query &lt;- function(...) RSQLite::dbGetQuery(db, ...)
+extra_table &lt;- query(&quot;select * from extra&quot;)
+RSQLite::dbDisconnect(db)
+
+ctwas_results$genename &lt;- extra_table$genename[match(ctwas_results$id, extra_table$gene)]
+
+#show results with highest PIPs
+col_order_2= c(&quot;genename&quot;, &quot;chrom&quot;, &quot;id&quot;, &quot;pos&quot;, &quot;type&quot;, &quot;region_tag1&quot;, &quot;region_tag2&quot;, &quot;cs_index&quot;, &quot;susie_pip&quot; , &quot;mu2&quot;)
+ctwas_results &lt;- ctwas_results[, ..col_order_2]
+head(ctwas_results[order(-ctwas_results$susie_pip),])</code></pre>
+</div>
+<div id="questionnaire-06" class="section level1">
+<h1>Questionnaire 06</h1>
+<p>cTWAS <a href="https://forms.gle/ZpuEuv8Xmxw1eDPf6">Fill out this form</a></p>
+</div>
+<div id="faq-and-frequent-errors" class="section level1">
+<h1>FAQ and frequent errors</h1>
+<ul>
+<li><p>conda environment may not load correctly after resuming the project in Rstudio cloud</p></li>
+<li><p>when inner joining by ensemble id of genes, make sure that both datasets have either the same versions or remove versions</p></li>
+</ul>
+</div>
+<div id="contributors" class="section level1">
+<h1>Contributors</h1>
+<ul>
+<li>Festus Nyasimi</li>
+<li>Margaret Perry</li>
+<li>Wes Crouse</li>
+<li>Owen Melia</li>
+</ul>
 </div>
