@@ -3,7 +3,8 @@ title: CRI Gardner upgrade news
 author: Haky Im
 date: '2020-11-30'
 slug: cri-gardner-upgrade-news
-categories: []
+categories:
+  - news
 tags: []
 description: ''
 topics: []
