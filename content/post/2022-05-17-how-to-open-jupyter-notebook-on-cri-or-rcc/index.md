@@ -22,12 +22,12 @@ https://rcc.uchicago.edu/docs/software/environments/python/index.html#running-ju
 
 log into gardner
 ```
-$ ssh <username>@gardner.cri.uchicago.edu`
+$ ssh <username>@gardner.cri.uchicago.edu
 ```
 on gardner run
 ```
 $ PATH=/apps/software/gcc-6.2.0/miniconda3/4.7.10/bin:$PATH
-$ jupyter notebook --no-browser --port=XXXX`
+$ jupyter notebook --no-browser --port=XXXX
 ```
 This version of jupyter works, others may fail.
 
