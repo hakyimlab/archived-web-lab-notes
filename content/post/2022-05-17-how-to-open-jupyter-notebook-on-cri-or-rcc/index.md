@@ -17,12 +17,16 @@ This is a workflow to show how to open jupyter notebook on CRI or RCC. There are
 > If you want to highligh some text
 
 ### Remote side
-Make sure you've installed the required Python modules and packages.
+Make sure you've installed the required Python modules and packages
 
+log into gardner
 ```
 $ ssh <username>@gardner.cri.uchicago.edu`
-
-
+```
+on gardner run
+```
+$ module load gcc/6.2.0
+$ module load python
 $ jupyter notebook --no-browser --port=XXXX`
 ```
 
