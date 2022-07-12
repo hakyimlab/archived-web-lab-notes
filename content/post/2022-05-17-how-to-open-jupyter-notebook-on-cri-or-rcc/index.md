@@ -1,5 +1,5 @@
 ---
-title: 2022-05-17-how-to-open-jupyter-notebook-on-CRI-or-RCC
+title: How-to-open-jupyter-notebook-on-CRI-or-RCC
 author: Charles Zhou
 date: '2022-05-17'
 slug: how-to-open-jupyter-notebook-on-cri-or-rcc
