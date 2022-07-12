@@ -25,14 +25,12 @@ $ ssh <username>@gardner.cri.uchicago.edu`
 ```
 on gardner run
 ```
-$ module load gcc/6.2.0
-$ module load python
+$ PATH=/apps/software/gcc-6.2.0/miniconda3/4.7.10/bin:$PATH
 $ jupyter notebook --no-browser --port=XXXX`
 ```
-
+This version of jupyter works, other may fail.
 
 The default port will be 8888, and "--no-browser" is required because if you do not specify --no-browser --ip=, the web browser will be launched on the node and the URL returned cannot be used on your local machine.
-
 
 If you set port=8889, the result should be like the following:
 
