@@ -18,7 +18,7 @@ https://rcc.uchicago.edu/docs/software/environments/python/index.html#running-ju
 
 ## On Gardner 
 
-## On remote side (gardner)
+### On remote side (gardner)
 
 log into gardner
 ```
@@ -50,3 +50,7 @@ Select any port=YYYY which you haven't used for other work.
 
 Then open a browser, type in `localhost=<YYYY>` and copy and paste the token from the last step.<br/>
 Finally, it should worked out.
+
+## On theta
+
+Find notes in notion <mark>[here](https://www.notion.so/hakyimlab/how-to-run-jupyter-notebook-3c4eacc36dcd4683a3bc45fdeb0fa640#61cc5be28e8d48e3bbe9a9f3664932f4)</mark>
