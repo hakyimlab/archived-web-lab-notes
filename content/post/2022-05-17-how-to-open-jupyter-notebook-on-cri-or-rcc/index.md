@@ -53,4 +53,4 @@ Finally, it should worked out.
 
 ## On theta
 
-Find notes in notion <mark>[here](https://www.notion.so/hakyimlab/how-to-run-jupyter-notebook-3c4eacc36dcd4683a3bc45fdeb0fa640#61cc5be28e8d48e3bbe9a9f3664932f4)</mark>
+Find notes in notion <mark>[here](https://internal-notes.hakyimlab.org/post/2022/07/14/running-jupyter-lab-on-theta-and-thetagpu/)</mark>
