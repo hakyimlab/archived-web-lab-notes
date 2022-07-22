@@ -24,6 +24,12 @@ The full tutorial is [online](https://useast.ensembl.org/info/data/biomart/how_t
 
 ```
 library(tidyverse)
+
+## install biomaRt if not avalable
+## if (!require("BiocManager", quietly = TRUE))
+##     install.packages("BiocManager")
+## BiocManager::install("biomaRt")
+
 library(biomaRt)
 
 # connect to BioMart database, choosing gene annotations for rats
