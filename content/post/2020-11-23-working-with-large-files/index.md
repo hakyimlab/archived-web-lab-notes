@@ -36,7 +36,7 @@ python3 /Users/sabrinami/Github/MetaXcan/software/Predict.py \
 
 ```
 
-## here is a semi-automated way to generate and open the data bolder in box
+## here is a semi-automated way to generate and open the data folder in box
 Copy pasted it to the beginning of your Rmd file
 ```{r}
 suppressMessages(library(tidyverse))
@@ -56,3 +56,4 @@ WORK=DATA
 system(glue("open {DATA}")) ## this will open the folder 
 ```
 
+  
