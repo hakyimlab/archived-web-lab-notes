@@ -1,6 +1,6 @@
 ---
-title: BioMart Basics
-author: Sabrina
+title: How to annotate genes - BioMart Basics
+author: Sabrina Mi
 date: '2022-06-28'
 slug: query-gene-annotations-from-biomart
 categories:
