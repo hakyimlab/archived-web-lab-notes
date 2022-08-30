@@ -10,27 +10,19 @@ tags: []
 ---
 
 This post explains 
-1. How to set up the ukbrest environment (don't attempt this on gardner)
-2. how to query UKBREST  
-3. how to create an sqlite database from the postgres database 
-4. how to update the withdrawal list
+1. how to query UKBREST  
+2. how to create an sqlite database from the postgres database 
+3. how to update the withdrawal list
 
 > The version of ukbREST that runs on SQLite is kept [HERE](https://github.com/sabrina-mi/ukbrest). If you come across an existing ukbrest repo in CRI, it might be the original version.
 
-# Preliminary steps
-
-install conda environement using the https://github.com/hakyimlab/ukbrest/blob/master/environment.yml
-
-```
-TODO: add conda command that would create the environment using the yml file
-```
 
 # Querying ukbREST
 
 Start the server by specifying the full path to the SQLite file as the DB URI. 
 
 ```{bash, eval=FALSE}
-conda activate ukbrest
+conda activate /gpfs/data/im-lab/nas40t2/lab_software/miniconda/envs/ukb_env/
 export UKBREST_DB_URI="sqlite:////gpfs/data/ukb-share/sql/ukbrest.db"
 cd /gpfs/data/ukb-share/sql/ukbrest
 /gpfs/data/im-lab/nas40t2/lab_software/miniconda/envs/ukb_env/bin/python \
@@ -99,6 +91,7 @@ We decided to copy the Postgres database, rather than loading data the documente
 # Update withdrawal list (needs to be done when new withdrawal list comes in)
 
 ```
+conda activate /gpfs/data/im-lab/nas40t2/lab_software/miniconda/envs/ukb_env/
 export UKBREST_DB_URI="sqlite:////mnt/sql/ukbrest.db"
 export UKBREST_WITHDRAWALS_PATH="/mnt/data/withdrawals/"
 cd /mnt/software/ukbrest
