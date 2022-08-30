@@ -88,7 +88,7 @@ We generated the SQLite file from the Postgres database that was already loaded 
 conda activate ukbrest
 cd /mnt/sql
 python pg2sqlite.py tables.txt
-
+## find this code here https://github.com/sabrina-mi/ukbrest/blob/master/migration/pg2sqlite.py
 ```
 We decided to copy the Postgres database, rather than loading data the documented way, because the jobs were extremely slow to finish in CRI. However, when we periodically update withdrawal tables, or if we were to download new data, we would load the data directly from those CSVs. 
 
