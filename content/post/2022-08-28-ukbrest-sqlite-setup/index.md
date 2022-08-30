@@ -92,7 +92,7 @@ python pg2sqlite.py tables.txt
 ```
 We decided to copy the Postgres database, rather than loading data the documented way, because the jobs were extremely slow to finish in CRI. However, when we periodically update withdrawal tables, or if we were to download new data, we would load the data directly from those CSVs. 
 
-# Update withdrawal list
+# Update withdrawal list (needs to be done when new withdrawal list comes in)
 
 ```
 export UKBREST_DB_URI="sqlite:////mnt/sql/ukbrest.db"
