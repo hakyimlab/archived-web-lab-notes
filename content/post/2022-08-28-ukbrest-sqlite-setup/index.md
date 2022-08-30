@@ -13,6 +13,14 @@ tags: []
 
 The version of ukbREST that runs on SQLite is kept [HERE](https://github.com/sabrina-mi/ukbrest). If you come across an existing ukbrest repo in CRI, it might be the original version.
 
+# Preliminary steps
+
+install conda environement using the https://github.com/hakyimlab/ukbrest/blob/master/environment.yml
+
+```
+TODO: add conda command that would create the environment using the yml file
+```
+
 # Querying ukbREST
 
 Start the server by specifying the full path to the SQLite file as the DB URI. 
@@ -71,7 +79,7 @@ curl -G \
 ```
 The following error prints after querying if you are running the original version of ukbREST. Replacing with the updated branch and restarting the server should do the trick.
 
-# Loading the Database
+# Generating the sqlite database from the postgres database (this needs to be done once in bionimbus)
 
 We generated the SQLite file from the Postgres database that was already loaded with data in Bionimbus. The script `pg2sqlite.py` takes a list of table names in the Postgres database and copies them to `ukbrest.db`. I've added it to the Github, in `migration/pg2sqlite.py`, but the SQLite path and Postgres URI are hard-coded, if you plan to use it.
 
@@ -82,6 +90,8 @@ python pg2sqlite.py tables.txt
 
 ```
 We decided to copy the Postgres database, rather than loading data the documented way, because the jobs were extremely slow to finish in CRI. However, when we periodically update withdrawal tables, or if we were to download new data, we would load the data directly from those CSVs. 
+
+## update withdrwal list
 
 ```
 export UKBREST_DB_URI="sqlite:////mnt/sql/ukbrest.db"
