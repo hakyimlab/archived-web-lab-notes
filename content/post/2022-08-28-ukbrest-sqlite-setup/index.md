@@ -9,7 +9,7 @@ categories:
 tags: []
 ---
 
-This post explains 1) how to query UKBREST and 2) how to create an sqlite database from the postgres database.
+> This post explains 1) how to query UKBREST and 2) how to create an sqlite database from the postgres database.
 
 The version of ukbREST that runs on SQLite is kept [HERE](https://github.com/sabrina-mi/ukbrest). If you come across an existing ukbrest repo in CRI, it might be the original version.
 
