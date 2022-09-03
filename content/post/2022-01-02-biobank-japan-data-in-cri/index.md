@@ -15,7 +15,8 @@ I first downloaded and decrypted Biobank Japan data ([instructions](https://lab-
 
 **BBJ phenotypes file:** `gpfs/data/im-lab/nas40t2/Data/BBJ/BBJ-phenotypes.csv`
 
-The original BBJ phenotype data, in `BBJ-phenotypes-decrypted`, was structured so that individual data for each phenotype was in a different folder. For convenience, I combined all the phenotypes in one table, `BBJ-phenotypes.csv`. The file `BBJ-phenotype-list.txt` contains all the phenotypes and their folder names ([download](BBJ-phenotype-list.txt))
+This CSV combines all phenotype data in the `BBJ-phenotypes-decrypted` subdirectory into one file.
+The original BBJ phenotype data in `BBJ-phenotypes-decrypted`, was bulky and used dataset IDs instead of phenotype names.  The file `BBJ-phenotype-list.txt` contains all the phenotypes and their folder names ([download](BBJ-phenotype-list.txt))
 
 I created the combined phenotype file with the following [script](process-phenotypes.py):
 
@@ -24,5 +25,11 @@ python3 process-phenotypes.py --BBJ_folder /Users/sabrinami/BBJ/BBJ-phenotypes \
 --phenotype_mapping /Users/sabrinami/Github/analysis-sabrina/BBJ-data-processing/BBJ-phenotype-list.txt \
 --output /Users/sabrinami/Github/analysis-sabrina/BBJ-data-processing/BBJ-phenotypes.csv
 ```
+
+## Genotypes
+
+**BBJ genotypes folder:** `gpfs/data/im-lab/nas40t2/Data/BBJ/BBJ-genotypes-decrypted`
+
+
 
 
