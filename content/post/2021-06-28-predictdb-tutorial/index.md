@@ -13,7 +13,7 @@ This tutorial will provide the steps you need to follow to get you started train
 
 
 ## Getting the training dataset
-The training dataset can ne downloaded from this [link](https://uchicago.box.com/s/ewnrqs31ivobz2sn6462cq2eb423dvpr).The data set includes the following files you will use for learning;
+The training dataset can be downloaded from this [link](https://zenodo.org/record/6998955#.Yx-cqS-B35g).The data set includes the following files you will use for learning;
   1. Normalized gene expression - `GD462.GeneQuantRPKM.50FN.samplename.resk10.txt.gz`
   2. SNP annotation file - `geuvadis.annot.txt`
   3. Gene annotation file - `gencode.v12.annotation.gtf.gz`
