@@ -47,7 +47,7 @@ params:
   pageFeatures: [+sidenotes]
   features: [-number_sections]
   description: >
-    Haky's daily log and other musings, built with Hugo and blogdown with the hugo-prose theme.
+    Hakyimlab's notes
   footer: >
     &copy; 2020 Hakyimlab and authors
   license: >
