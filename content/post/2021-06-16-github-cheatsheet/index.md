@@ -21,7 +21,11 @@ git add .
 git commit -m "Initial commit"
 
 -- push to the github remote repos ensuring you overwrite history
-git remote add origin git@github.com:<YOUR ACCOUNT>/<YOUR REPOS>.git
+git remote add origin https://github.com/<YOUR ACCOUNT>/<YOUR REPOS>.git
+git push -u --force origin main 
+```
+Note: older repos may have master as the main branch
+```
 git push -u --force origin master
 ```
 
