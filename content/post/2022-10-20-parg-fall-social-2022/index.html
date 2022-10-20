@@ -1,0 +1,95 @@
+---
+title: PARG Fall Social 2022
+author: Haky Im
+date: '2022-10-20'
+slug: parg-fall-social-2022
+categories:
+  - analysis
+tags: []
+editor_options: 
+  chunk_output_type: console
+---
+
+
+
+<pre class="r"><code>suppressMessages(library(tidyverse))
+suppressMessages(library(glue))
+PRE = &quot;/Users/haekyungim/Library/CloudStorage/Box-Box/LargeFiles/imlab-data/data-Github/web-data&quot;
+##PRE=&quot;/Users/margaretperry/Library/CloudStorage/Box-Box/imlab-data/data-Github/web-data &quot;
+##PRE=&quot;/Users/temi/Library/CloudStorage/Box-Box/imlab-data/data-Github/web-data&quot;
+## COPY THE DATE AND SLUG fields FROM THE HEADER
+SLUG=&quot;parg-fall-social-2022&quot; ## copy the slug from the header
+bDATE=&#39;2022-10-20&#39; ## copy the date from the blog&#39;s header here
+DATA = glue(&quot;{PRE}/{bDATE}-{SLUG}&quot;)
+if(!file.exists(DATA)) system(glue::glue(&quot;mkdir {DATA}&quot;))
+WORK=DATA
+
+## move data to DATA
+#tempodata=(&quot;~/Downloads/tempo/gwas_catalog_v1.0.2-associations_e105_r2022-04-07.tsv&quot;)
+#system(glue::glue(&quot;cp {tempodata} {DATA}/&quot;))
+system(glue(&quot;open {DATA}&quot;)) ## this will open the folder </code></pre>
+<pre class="r"><code>df &lt;- readxl::read_excel(glue(&quot;{WORK}/report-2022-10-20T1314.xlsx&quot;))</code></pre>
+<pre><code>## New names:
+## • `Please explain` -&gt; `Please explain...26`
+## • `Please explain` -&gt; `Please explain...27`</code></pre>
+<pre class="r"><code>names(df)</code></pre>
+<pre><code>##  [1] &quot;Order #&quot;                                                                         
+##  [2] &quot;Order Date&quot;                                                                      
+##  [3] &quot;First Name&quot;                                                                      
+##  [4] &quot;Last Name&quot;                                                                       
+##  [5] &quot;Email&quot;                                                                           
+##  [6] &quot;Quantity&quot;                                                                        
+##  [7] &quot;Price Tier&quot;                                                                      
+##  [8] &quot;Ticket Type&quot;                                                                     
+##  [9] &quot;Attendee #&quot;                                                                      
+## [10] &quot;Group&quot;                                                                           
+## [11] &quot;Order Type&quot;                                                                      
+## [12] &quot;Currency&quot;                                                                        
+## [13] &quot;Total Paid&quot;                                                                      
+## [14] &quot;Fees Paid&quot;                                                                       
+## [15] &quot;Eventbrite Fees&quot;                                                                 
+## [16] &quot;Eventbrite Payment Processing&quot;                                                   
+## [17] &quot;Attendee Status&quot;                                                                 
+## [18] &quot;Home Address 1&quot;                                                                  
+## [19] &quot;Home Address 2&quot;                                                                  
+## [20] &quot;Home City&quot;                                                                       
+## [21] &quot;Home State&quot;                                                                      
+## [22] &quot;Home Zip&quot;                                                                        
+## [23] &quot;Home Country&quot;                                                                    
+## [24] &quot;Will you be attending the event?&quot;                                                
+## [25] &quot;Do you have any allergies or dietary requirements?&quot;                              
+## [26] &quot;Please explain...26&quot;                                                             
+## [27] &quot;Please explain...27&quot;                                                             
+## [28] &quot;Are you interested in participating in the talent show?&quot;                         
+## [29] &quot;What equipment would you need?&quot;                                                  
+## [30] &quot;Campus affiliation  (dept/div) and role (undergrad, grad, staff, faculty, other)&quot;
+## [31] &quot;Is this your first time attending a Pan-Asian Resource Group event?&quot;             
+## [32] &quot;How did you hear about us?&quot;</code></pre>
+<pre class="r"><code>df %&gt;% count(`Campus affiliation  (dept/div) and role (undergrad, grad, staff, faculty, other)`) %&gt;% arrange(desc(n))</code></pre>
+<pre><code>## # A tibble: 59 × 2
+##    Campus affiliation  (dept/div) and role (undergrad, grad, staff, facu…¹     n
+##    &lt;chr&gt;                                                                   &lt;int&gt;
+##  1 Grad                                                                       19
+##  2 grad                                                                        7
+##  3 Harris                                                                      6
+##  4 BSD                                                                         5
+##  5 Grad student                                                                3
+##  6 Harris student                                                              3
+##  7 PSD, grad                                                                   3
+##  8 Harris MPP                                                                  2
+##  9 PSD grad                                                                    2
+## 10 Booth                                                                       1
+## # … with 49 more rows, and abbreviated variable name
+## #   ¹​`Campus affiliation  (dept/div) and role (undergrad, grad, staff, faculty, other)`
+## # ℹ Use `print(n = ...)` to see more rows</code></pre>
+<p><mark>not very helpful, better to have list to select from rather than free text next time</mark></p>
+<pre class="r"><code>df %&gt;% count(`How did you hear about us?`) %&gt;% arrange(desc(n)) </code></pre>
+<pre><code>## # A tibble: 5 × 2
+##   `How did you hear about us?`                                                 n
+##   &lt;chr&gt;                                                                    &lt;int&gt;
+## 1 International House newsletter                                              40
+## 2 Through a friend                                                            30
+## 3 Through the Pan Asian or the Pan Asian Resource Group list serves           17
+## 4 Divisional/departmental events                                              12
+## 5 International House newsletter | Through the Pan Asian or the Pan Asian…     1</code></pre>
+<p><mark>I-house newsletter was the most effective dissemination</mark></p>
