@@ -31,6 +31,27 @@ To publish an analysis note in the notebook, you need to have blogdown and hugo 
 # Moving posts between different websites 
 - To move posts between websites (lab-notes.hakyimlab.org, internal-notes.hakyimlab.org, predictdb.org, etc) just move the specific folder under contents/post. For example, move the folder with all its contents in `~/Github/web-internal-notes/content/post/2020-10-29-first-note-hki/` to `~/Github/web-lab-notes/content/post/2020-10-29-first-note-hki/` or vice versa. When in doubt, publish first on the internal repo.
 
+# Large data should be posted in Box
+When running analysis, data should be placed in Box not under the githup repo. Add block as shown in the next block, which will automatically create a folder with the same name in the relevant Box data folder.
 
+# Add the following to every new post in Rmd
+```{r}
+suppressMessages(library(tidyverse))
+suppressMessages(library(glue))
+PRE = "/Users/haekyungim/Library/CloudStorage/Box-Box/LargeFiles/imlab-data/data-Github/web-data"
+##PRE="/Users/margaretperry/Library/CloudStorage/Box-Box/imlab-data/data-Github/web-data "
+##PRE="/Users/temi/Library/CloudStorage/Box-Box/imlab-data/data-Github/web-data"
+## COPY THE DATE AND SLUG fields FROM THE HEADER
+SLUG="correlation-between-ptrs-and-rat-height-bmi" ## copy the slug from the header
+bDATE='2022-07-07' ## copy the date from the blog's header here
+DATA = glue("{PRE}/{bDATE}-{SLUG}")
+if(!file.exists(DATA)) system(glue::glue("mkdir {DATA}"))
+WORK=DATA
+
+## move data to DATA
+#tempodata=("~/Downloads/tempo/gwas_catalog_v1.0.2-associations_e105_r2022-04-07.tsv")
+#system(glue::glue("cp {tempodata} {DATA}/"))
+system(glue("open {DATA}")) ## this will open the folder 
+```
 
 Netlify is hosting the content  [here](https://internal-notes.hakyimlab.org) <!-- (or  [here](https://web-internal-notes-hakyimlab.netlify.app) ) -->
