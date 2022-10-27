@@ -42,8 +42,8 @@ PRE = "/Users/haekyungim/Library/CloudStorage/Box-Box/LargeFiles/imlab-data/data
 ##PRE="/Users/margaretperry/Library/CloudStorage/Box-Box/imlab-data/data-Github/web-data "
 ##PRE="/Users/temi/Library/CloudStorage/Box-Box/imlab-data/data-Github/web-data"
 ## COPY THE DATE AND SLUG fields FROM THE HEADER
-SLUG="correlation-between-ptrs-and-rat-height-bmi" ## copy the slug from the header
-bDATE='2022-07-07' ## copy the date from the blog's header here
+SLUG="correlation-between-ptrs-and-rat-height-bmi" ## TODO copy the slug from the header
+bDATE='2022-07-07' ## TODO copy the date from the blog's header here
 DATA = glue("{PRE}/{bDATE}-{SLUG}")
 if(!file.exists(DATA)) system(glue::glue("mkdir {DATA}"))
 WORK=DATA
