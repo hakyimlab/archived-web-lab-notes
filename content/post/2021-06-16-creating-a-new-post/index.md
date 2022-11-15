@@ -17,8 +17,6 @@ To publish an analysis note in the notebook, you need to have blogdown and hugo 
 - Go to the folder where you cloned the repo and open RStudio by double clicking `internal-notes.Rproj` (your Rproj name may be different depending on which repo you cloned)
 - Start a new analysis by adding a `New Post` from the addin option at the top of the `source` panel (this creates a folder in the contents/post/ folder with and index.md and subfolders with figures)
 
-<img src=https://github.com/hakyimlab/web-lab-notes/blob/master/static/new-post-addin.png width="400x"> 
-
 <img src=https://raw.githubusercontent.com/hakyimlab/web-lab-notes/master/static/new-post-addin.png width="400x">
 
 - Choose the title, author, tags
