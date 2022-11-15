@@ -13,8 +13,8 @@ tags: []
 To publish an analysis note in the notebook, you need to have blogdown and hugo installed on your computer. 
 - `install.packages('blogdown') `
 - `blogdown::install_hugo()`
-- git clone this repository (for example `git clone https://github.com/hakyimlab/web-internal-notes.git`)
-- Go to the folder where you cloned the repo and open RStudio by double clicking `internal-notes.Rproj` (your Rproj name may be different depending on which repo you cloned)
+- git clone this repository (for example `git clone https://github.com/hakyimlab/web-lab-notes.git`)
+- Go to the folder where you cloned the repo and open RStudio by double clicking `web-lab-notes.Rproj` (your Rproj name may be different depending on which repo you cloned)
 - Start a new analysis by adding a `New Post` from the addin option at the top of the `source` panel (this creates a folder in the contents/post/ folder with and index.md and subfolders with figures)
 
 <img src=https://raw.githubusercontent.com/hakyimlab/web-lab-notes/master/static/new-post-addin.png width="400x">
@@ -54,4 +54,4 @@ WORK=DATA
 system(glue("open {DATA}")) ## this will open the folder 
 ```
 
-Netlify is hosting the content  [here](https://internal-notes.hakyimlab.org) <!-- (or  [here](https://web-internal-notes-hakyimlab.netlify.app) ) -->
+Netlify is hosting the content  [here](https://lab-notes.hakyimlab.org) <!-- (or  [here](https://web-internal-notes-hakyimlab.netlify.app) ) -->
