@@ -19,6 +19,8 @@ To publish an analysis note in the notebook, you need to have blogdown and hugo 
 
 <img src=https://github.com/hakyimlab/web-lab-notes/blob/master/static/new-post-addin.png width="400x"> 
 
+<img src=https://github.com/hakyimlab/web-lab-notes/blob/master/static/new-post-addin.png?raw=true width="400x">
+
 - Choose the title, author, tags
 - Choose the `md` format unless you will be be running R commands in the post in which case select `R Markdown (.Rmd)` format option
 - Save the md or Rmd (for the Rmd this will trigger the rendering of the html). The reason we use `*.md` format instead of the `*.Rmd` format is the the md format can be edited directly from github and will be rendered automatically. Rmd needs to be rendered by Rstudio.
