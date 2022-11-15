@@ -19,7 +19,7 @@ To publish an analysis note in the notebook, you need to have blogdown and hugo 
 
 <img src=https://github.com/hakyimlab/web-lab-notes/blob/master/static/new-post-addin.png width="400x"> 
 
-<img src=https://github.com/hakyimlab/web-lab-notes/blob/master/static/new-post-addin.png?raw=true width="400x">
+<img src=https://raw.githubusercontent.com/hakyimlab/web-lab-notes/master/static/new-post-addin.png width="400x">
 
 - Choose the title, author, tags
 - Choose the `md` format unless you will be be running R commands in the post in which case select `R Markdown (.Rmd)` format option
