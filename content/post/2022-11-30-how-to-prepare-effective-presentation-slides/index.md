@@ -8,7 +8,7 @@ categories:
 tags: []
 ---
 
-** This is a great summary of how to make your presentations more effective **
+## PLoS summary of how to make your presentations more effective
 
 ![](https://journals.plos.org/ploscompbiol/article/figure/image?size=large&id=10.1371/journal.pcbi.1009554.g001)
 
@@ -18,3 +18,11 @@ tags: []
 **Published:**  December 2, 2021
 
 **Copyright:**  © 2021 Kristen M. Naegle. This is an open access article distributed under the terms of the [Creative Commons Attribution License](http://creativecommons.org/licenses/by/4.0/), which permits unrestricted use, distribution, and reproduction in any medium, provided the original author and source are credited.
+
+
+## Itai Yanai's twitter thread on how to make presentations
+
+https://twitter.com/itaiyanai/status/1597793126454001664?s=46&t=NbUeNpAXB-sGrJTgHuJ5pA
+
+
+{{< tweet 1597793126454001664 >}} 
