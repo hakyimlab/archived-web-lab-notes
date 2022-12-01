@@ -22,7 +22,4 @@ tags: []
 
 ## Itai Yanai's twitter thread on how to make presentations
 
-https://twitter.com/itaiyanai/status/1597793126454001664?s=46&t=NbUeNpAXB-sGrJTgHuJ5pA
-
-
 {{< tweet 1597793126454001664 >}} 
