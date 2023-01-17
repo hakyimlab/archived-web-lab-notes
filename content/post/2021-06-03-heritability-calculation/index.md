@@ -1,6 +1,6 @@
 ---
 title: Heritability Calculation
-author: R package build
+author: Natasha Santhanam
 date: '2021-06-03'
 slug: heritability-calculation
 categories: []
