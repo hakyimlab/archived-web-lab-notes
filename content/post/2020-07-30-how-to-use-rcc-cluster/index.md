@@ -8,6 +8,10 @@ categories:
 tags: []
 ---
 
+## Updated RCC documentation 
+https://rcc-uchicago.github.io/user-guide/
+
+
 
 ## RCC account 
 Please follow the instruction to request your RCC account: <a href= "https://rcc.uchicago.edu/getting-started/general-user-account-request"> General RCC User Account Request </a> 
