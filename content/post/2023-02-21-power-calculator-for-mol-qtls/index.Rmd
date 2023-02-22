@@ -15,22 +15,6 @@ editor_options:
 
 The success of the prediction training depends mostly on whether the corresponding QTL study will be powered. Thus, we provide here the power to detect molecular QTLs for a range of sample sizes, effect sizes, and minor allele frequencies.
 
-
-## function: R2 to beta and sig2epsi
-```{r}
-get_beta_and_sig2epsi = function(r2, sig2Y, maf) {
-  # r2: proportion of variation explained by SNP
-  # sig2Y: variance of trait
-  # maf: minor allele frequency of SNP
-  # it returns a list of beta and variance of noise term
-  
-  ## effect size is calculated from r2 = beta^2 *2*maf*(1-maf)
-  beta = sqrt( r2 * sig2Y / (2 * maf * (1 - maf)) )
-  sig2epsi = sig2Y * (1 - r2)
-  return(list(beta = beta, sig2epsi = sig2epsi))
-}
-```
-
 ## function: R2 from beta assuming variance of y = 1
 $$y = \delta \cdot x + \epsilon$$
 
