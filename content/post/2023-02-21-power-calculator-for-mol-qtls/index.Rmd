@@ -19,30 +19,27 @@ The success of the prediction training depends mostly on whether the correspondi
 $$y = \delta \cdot x + \epsilon$$
 
 $$r^2 = \delta^2 \cdot \text{var}(x) = \delta^2 \cdot 2 \cdot \text{maf} \cdot (1-\text{maf})$$
-```{r}
-```
-
 
 ```{r}
-
-mafvec = c(0.05, 0.10, 0.30) 
-effvec = c(0.40, 0.60, 0.80) 
-nvec = c(200,350,500) 
-nsnps = 1000
-
+library(tidyverse)
+library(knitr)
 ## install.packages("pwr")
 if (!("pwr" %in% installed.packages()[, 1])) {
   install.packages("pwr")
 }
 ```
 
+## define ranges of maf, eff, sample sizes
+```{r}
+mafvec = c(0.05, 0.10, 0.30) 
+effvec = c(0.40, 0.60, 0.80) 
+nvec = c(200,350,500) 
+nsnps = 1000
+alpha = 0.05/nsnps
+```
 
 ## create data frame with all combinations
 ```{r}
-library(tidyverse)
-library(knitr)
-
-alpha = 0.05/nsnps
 mat = matrix(NA,length(mafvec)*length(effvec)*length(nvec),4)
 colnames(mat) = c("maf","eff","nsam","power")
 cont = 1
@@ -67,6 +64,59 @@ mat %>% data.frame() %>%
   kable(format = "markdown", align = c("l", "l", "c", "c", "c"), 
         caption = "Power by sample size") 
 
+
+```
+
+
+## calculate detectable effect sizes
+```{r}
+
+```
+
+The following table shows the detectable effect sizes at 80% power with a significance level of 0.05/`r nsnps`. Variance of Y is standardized to 1.
+
+```{r}
+
+calc_mateff = function(mafvec,nvec,outmat=FALSE)
+{
+  mateff = matrix(NA,length(mafvec)*length(nvec),3)
+colnames(mateff) = c("maf","nsam","power")
+cont = 1
+for(maf in mafvec)
+{
+  for(nn in nvec)
+  {
+      # r2 = eff^2 * 2 * maf * (1-maf)
+      # rr = sqrt(r2)
+      pp = pwr::pwr.r.test(n = nn, power=0.80 , sig.level = alpha)
+      eff = pp$r/sqrt(2*maf*(1-maf))
+      mateff[cont,] = c(maf,  nn, eff)
+      cont = cont + 1
+  }
+}
+  mateff = mateff %>% data.frame() %>% 
+  pivot_wider(names_from = nsam, values_from = power) %>% 
+  mutate_at(vars(-c(1)), ~round(., 2)) 
+  print(mateff)
+  if(outmat) mateff
+} 
+
+mafvec = c(0.05, 0.10, 0.30) 
+nvec = c(100,500,1000,7000) 
+nsnps = 1000
+alpha = 0.05/nsnps
+## ---
+mat = calc_mateff(mafvec,nvec,outmat=TRUE)
+
+mat %>%  kable(format = "markdown", align = c("l", "c", "c", "c", "c"), caption = "Detectable effects w/1000 SNPs",label=NA) 
+
+mafvec = c(0.05, 0.10, 0.30) 
+nvec = c(1000,6000,10000,100000) 
+nsnps = 1e6
+alpha = 0.05/nsnps
+## ---
+mat = calc_mateff(mafvec,nvec,outmat=TRUE)
+mat %>%  kable(format = "markdown", align = c("l", "c", "c", "c", "c"), caption = "Detectable effects w/1e6 SNPs",label=NA) 
 
 ```
 
