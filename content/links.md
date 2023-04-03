@@ -7,3 +7,8 @@ https://hakyimlab.org
 https://lab-notes.hakyimlab.org
 https://current-projects.hakyimlab.org
 https://internal-notes.hakyimlab.org
+
+
+
+Temporary link for class
+https://www.icloud.com/keynote/0d97sSqTr1SnpL2k6qO_AwN6Q#L5-Population-Structure-PCA
