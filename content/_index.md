@@ -5,7 +5,7 @@ menu:
 title: Home
 ---
 
-# IM Lab Notebook
+# ARCHIVED IM Lab Notebook
 
 This is a public notebook with analysis bits, how to's, and other notes from the hakyimlab members.
 
